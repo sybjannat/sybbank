@@ -34,79 +34,232 @@
     body {
       background: linear-gradient(145deg, #f9f0f5 0%, #efe9ff 100%);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 12px;
+      display: block;
+      padding: 0;
+      margin: 0;
       overflow-x: hidden;
-      overflow-y: auto;
     }
 
-    /* Responsive Design */
+    .app-container {
+      max-width: 100%;
+      width: 100%;
+      min-height: 100vh;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Mobile-first: full screen app */
     @media (min-width: 768px) {
-      body {
-        padding: 20px;
-      }
-
       .app-container {
-        max-width: 500px;
-        border-radius: 50px;
-      }
-
-      .login-card {
-        max-width: 400px;
-        padding: 50px 45px;
-      }
-
-      .net-worth-card {
-        padding: 36px 32px;
-      }
-
-      .net-worth-number {
-        font-size: 52px;
-      }
-
-      .summary-amount {
-        font-size: 52px;
-      }
-
-      .modal-content {
-        max-width: 480px;
+        max-width: 100%;
       }
     }
 
     @media (min-width: 1024px) {
-      body {
-        padding: 30px;
-      }
-
       .app-container {
-        max-width: 600px;
-        border-radius: 60px;
+        max-width: 800px;
+        margin: 0 auto;
+        border-radius: 30px;
+        min-height: calc(100vh - 60px);
+        margin-top: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 30px 60px rgba(147, 51, 234, 0.25), 0 15px 35px rgba(236, 72, 153, 0.2);
       }
+    }
 
-      .login-card {
-        max-width: 450px;
-        padding: 60px 50px;
+    @media (min-width: 1440px) {
+      .app-container {
+        max-width: 900px;
+        min-height: calc(100vh - 80px);
+        margin-top: 40px;
+        margin-bottom: 40px;
       }
+    }
 
-      .login-logo {
-        width: 100px;
-        height: 100px;
-        font-size: 44px;
-      }
+    .app-container {
+      max-width: 100%;
+      width: 100%;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 30px;
+      box-shadow: 0 30px 60px rgba(147, 51, 234, 0.25), 0 15px 35px rgba(236, 72, 153, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      overflow: hidden;
+      position: relative;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
 
-      .login-title {
-        font-size: 36px;
-      }
+    /* Net Worth Card - Base Mobile Styles */
+    .net-worth-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f43f5e 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 6s ease infinite;
+      border-radius: 24px;
+      padding: 16px 14px;
+      margin-bottom: 16px;
+      color: white;
+      box-shadow: 0 20px 40px rgba(102, 126, 234, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      position: relative;
+      overflow: visible;
+    }
 
+    .net-worth-label {
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0.95;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .month-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 8px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .net-worth-number {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 6px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    .month-stats {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-value {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(10px);
+      padding: 6px 3px;
+      border-radius: 10px;
+      width: 100%;
+      gap: 2px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-value i {
+      font-size: 11px;
+      margin-bottom: 1px;
+    }
+
+    .stat-label {
+      font-size: 8px;
+      opacity: 0.85;
+      font-weight: 600;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .stat-amount {
+      font-weight: 700;
+      font-size: 9px;
+      text-align: center;
+    }
+
+    /* Quick Actions - Base Mobile Styles */
+    .quick-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin: 12px 0 12px 0;
+      padding: 0 2px;
+    }
+
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 10px 6px;
+      border-radius: 14px;
+      width: 100%;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: none;
+    }
+
+    .action-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .action-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: white;
+    }
+
+    /* Responsive Design */
+    @media (min-width: 768px) {
       .net-worth-card {
-        padding: 42px 38px;
-        border-radius: 42px;
+        padding: 24px 22px;
       }
 
       .net-worth-number {
-        font-size: 60px;
+        font-size: 42px;
+      }
+
+      .month-stats {
+        gap: 8px;
+      }
+
+      .stat-value {
+        padding: 10px 6px;
+      }
+
+      .summary-amount {
+        font-size: 48px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .net-worth-card {
+        padding: 32px 28px;
+        border-radius: 36px;
+      }
+
+      .net-worth-number {
+        font-size: 52px;
       }
 
       .month-stats {
@@ -114,89 +267,98 @@
       }
 
       .stat-value {
-        padding: 16px 12px;
+        padding: 14px 10px;
       }
 
       .summary-amount {
-        font-size: 58px;
+        font-size: 54px;
       }
 
       .section-title {
         font-size: 20px;
       }
-
-      .modal-content {
-        max-width: 520px;
-        padding: 32px;
-      }
     }
 
     @media (min-width: 1440px) {
-      body {
-        padding: 40px;
-      }
-
-      .app-container {
-        max-width: 700px;
-        border-radius: 70px;
-      }
-
       .net-worth-card {
-        padding: 50px 45px;
+        padding: 40px 35px;
       }
 
       .net-worth-number {
-        font-size: 68px;
+        font-size: 60px;
       }
 
       .net-worth-label {
-        font-size: 18px;
+        font-size: 16px;
       }
 
       .summary-amount {
-        font-size: 64px;
-      }
-
-      .stat-label {
-        font-size: 11px;
-      }
-
-      .stat-amount {
-        font-size: 14px;
+        font-size: 60px;
       }
     }
 
     @media (max-width: 380px) {
+      body {
+        padding: 6px;
+      }
+
       .app-container {
-        border-radius: 30px;
+        border-radius: 24px;
       }
 
       .net-worth-card {
-        padding: 20px 18px;
-        border-radius: 28px;
+        padding: 14px 12px;
+        border-radius: 20px;
       }
 
       .net-worth-number {
-        font-size: 32px;
+        font-size: 28px;
       }
 
       .month-stats {
-        gap: 4px;
+        gap: 3px;
       }
 
       .stat-value {
-        padding: 8px 4px;
-        border-radius: 12px;
+        padding: 5px 2px;
+        border-radius: 8px;
       }
 
       .summary-amount {
-        font-size: 36px;
+        font-size: 32px;
       }
 
       .login-card {
-        padding: 30px 24px;
-        border-radius: 24px;
+        padding: 24px 20px;
+        border-radius: 20px;
       }
+
+      .login-title {
+        font-size: 22px;
+      }
+
+      .quick-actions {
+        gap: 5px;
+        margin: 10px 0 10px 0;
+      }
+
+      .action-btn {
+        padding: 8px 5px;
+        border-radius: 12px;
+      }
+
+      .action-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+      }
+
+      .action-label {
+        font-size: 9px;
+      }
+    }
+
+    @media (min-width: 768px) {
 
       .login-title {
         font-size: 24px;
