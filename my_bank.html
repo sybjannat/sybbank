@@ -349,12 +349,22 @@
       }
 
       .net-worth-card {
-        padding: 14px 12px;
+        padding: 28px 18px;
         border-radius: 0;
       }
 
       .net-worth-number {
-        font-size: 28px;
+        font-size: 34px;
+      }
+
+      .month-stats {
+        gap: 4px;
+        margin-top: 16px;
+      }
+
+      .stat-value {
+        padding: 10px 4px;
+        border-radius: 12px;
       }
 
       .month-stats {
@@ -733,28 +743,35 @@
       display: block;
     }
 
-    /* Net Worth Card - Modern Animated Redesign */
+    /* Net Worth Card - Ultra Modern Animated Redesign */
     .net-worth-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f43f5e 100%);
-      background-size: 200% 200%;
-      animation: gradientShift 6s ease infinite;
-      border-radius: 36px;
-      padding: 32px 30px;
-      margin-bottom: 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+      background-size: 400% 400%;
+      animation: gradientFlow 10s ease infinite;
+      border-radius: 24px;
+      padding: 32px 24px;
+      margin-bottom: 18px;
       color: white;
-      box-shadow: 0 30px 60px rgba(102, 126, 234, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
       position: relative;
       overflow: visible;
     }
 
-    @keyframes gradientShift {
+    @keyframes gradientFlow {
       0% {
         background-position: 0% 50%;
       }
 
-      50% {
+      25% {
         background-position: 100% 50%;
+      }
+
+      50% {
+        background-position: 100% 100%;
+      }
+
+      75% {
+        background-position: 0% 100%;
       }
 
       100% {
@@ -762,91 +779,117 @@
       }
     }
 
+    /* Floating orbs for visual effect */
     .net-worth-card::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
-      animation: float 8s ease-in-out infinite;
-    }
-
-    @keyframes float {
-
-      0%,
-      100% {
-        transform: translate(0, 0) rotate(0deg);
-      }
-
-      50% {
-        transform: translate(20px, -20px) rotate(10deg);
-      }
+      top: -80px;
+      left: -80px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+      animation: orbFloat 12s ease-in-out infinite;
+      pointer-events: none;
     }
 
     .net-worth-card::after {
       content: '';
       position: absolute;
-      width: 150px;
-      height: 150px;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-      border-radius: 50%;
-      top: -30px;
-      right: -30px;
-      animation: pulse 4s ease-in-out infinite;
+      bottom: -100px;
+      right: -80px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+      animation: orbFloat 15s ease-in-out infinite reverse;
+      pointer-events: none;
     }
 
-    @keyframes pulse {
+    @keyframes orbFloat {
 
       0%,
       100% {
-        transform: scale(1);
-        opacity: 0.5;
+        transform: translate(0, 0) scale(1);
+      }
+
+      33% {
+        transform: translate(30px, -30px) scale(1.1);
+      }
+
+      66% {
+        transform: translate(-20px, 20px) scale(0.9);
+      }
+    }
+
+    /* Glassmorphism shine */
+    .net-worth-card .shine {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: shine 8s ease-in-out infinite;
+    }
+
+    @keyframes shine {
+
+      0%,
+      100% {
+        left: -100%;
       }
 
       50% {
-        transform: scale(1.2);
-        opacity: 0.8;
+        left: 200%;
       }
     }
 
     .net-worth-label {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
-      opacity: 0.95;
-      letter-spacing: 0.5px;
+      opacity: 0.9;
+      letter-spacing: 1px;
       margin-bottom: 8px;
       position: relative;
       z-index: 1;
+      text-transform: uppercase;
     }
 
     .month-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
-      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 16px;
       text-align: center;
       position: relative;
       z-index: 1;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 6px 16px;
+      border-radius: 20px;
+      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .net-worth-number {
-      font-size: 44px;
+      font-size: 42px;
       font-weight: 800;
       letter-spacing: -1px;
       line-height: 1.1;
-      margin-bottom: 12px;
-      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+      text-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
       position: relative;
       z-index: 1;
-      animation: fadeInUp 0.5s ease-out;
+      animation: fadeInUp 0.6s ease-out;
+      background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.9) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(15px);
       }
 
       to {
@@ -857,8 +900,8 @@
 
     .month-stats {
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
+      gap: 12px;
+      margin-top: 24px;
       justify-content: space-between;
       position: relative;
       z-index: 1;
@@ -873,39 +916,125 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(10px);
-      padding: 12px 8px;
-      border-radius: 18px;
+      padding: 16px 10px;
+      border-radius: 20px;
       width: 100%;
-      gap: 4px;
+      gap: 6px;
       transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Income stat - Green gradient */
+    .stat-value.income {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+      animation: incomeGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes incomeGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 8px 35px rgba(16, 185, 129, 0.6);
+      }
+    }
+
+    /* Expense stat - Red gradient */
+    .stat-value.expense {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+      animation: expenseGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes expenseGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 8px 35px rgba(239, 68, 68, 0.6);
+      }
+    }
+
+    /* Saved stat - Blue gradient */
+    .stat-value.saved {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+      animation: savedGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes savedGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 8px 35px rgba(59, 130, 246, 0.6);
+      }
     }
 
     .stat-value:hover {
-      background: rgba(255, 255, 255, 0.7);
-      transform: translateY(-2px);
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .stat-value::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      50% {
+        transform: translate(20px, 20px);
+      }
     }
 
     .stat-value i {
-      font-size: 14px;
-      margin-bottom: 2px;
+      font-size: 18px;
+      margin-bottom: 4px;
+      color: white;
+      position: relative;
+      z-index: 1;
     }
 
     .stat-label {
-      font-size: 9px;
-      opacity: 0.85;
-      font-weight: 600;
+      font-size: 11px;
+      font-weight: 700;
       text-align: center;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
+      color: white;
+      position: relative;
+      z-index: 1;
     }
 
     .stat-amount {
-      font-weight: 700;
-      font-size: 11px;
+      font-weight: 800;
+      font-size: 14px;
       text-align: center;
+      color: white;
+      position: relative;
+      z-index: 1;
     }
 
     .trend-up {
@@ -2885,6 +3014,7 @@
 
         <!-- Net worth card (dynamic) -->
         <div class="net-worth-card" id="net-worth-card">
+          <div class="shine"></div>
           <div class="net-worth-label">Net Worth</div>
           <div class="net-worth-number" id="net-worth-amount">৳ 0</div>
           <div class="month-label" id="month-label"></div>
@@ -4143,10 +4273,40 @@
         localStorage.setItem('bloom_lendings', JSON.stringify(lendings));
         console.log('Data saved:', accounts, transactions, goals, lendings);
         showToast('Data saved!', 'success');
+        playNotificationSound();
         refreshUI();
       } catch (e) {
         console.error('Error saving data:', e);
         showToast('Error saving data', 'error');
+      }
+    }
+
+    // Play notification sound
+    function playNotificationSound() {
+      try {
+        // Create audio context
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Create oscillator for beep sound
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        // Set sound parameters
+        oscillator.frequency.value = 800; // Hz
+        oscillator.type = 'sine';
+
+        // Set volume and duration
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+        // Play sound
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+      } catch (e) {
+        console.log('Sound not supported');
       }
     }
 
