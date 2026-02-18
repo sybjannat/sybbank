@@ -34,8 +34,8 @@
     html,
     body {
       background: linear-gradient(145deg, #f9f0f5 0%, #efe9ff 100%);
-      min-height: 100dvh;
-      height: 100dvh;
+      min-height: 100vh;
+      height: 100%;
       display: block;
       padding: 0;
       margin: 0;
@@ -45,8 +45,8 @@
     .app-container {
       max-width: 100%;
       width: 100%;
-      min-height: 100dvh;
-      height: 100dvh;
+      min-height: 100vh;
+      height: 100%;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 0;
       box-shadow: none;
@@ -118,7 +118,7 @@
     .app-container {
       max-width: 100%;
       width: 100%;
-      height: 100dvh;
+      height: 100vh;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 0;
       box-shadow: none;
@@ -592,7 +592,7 @@
     .app-container {
       max-width: 420px;
       width: 100%;
-      height: 100dvh;
+      height: 100vh;
       background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -732,20 +732,20 @@
 
     /* Net Worth Card - Modern Animated Redesign */
     .net-worth-card {
-      background: linear-gradient(145deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-      background-size: 400% 400%;
-      animation: gradientBG 8s ease infinite;
-      border-radius: 28px;
-      padding: 32px;
-      margin-bottom: 22px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f43f5e 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 6s ease infinite;
+      border-radius: 36px;
+      padding: 32px 30px;
+      margin-bottom: 24px;
       color: white;
-      box-shadow: 0 22px 60px rgba(102, 126, 234, 0.4);
-      animation: fadeInUp 0.5s ease forwards;
+      box-shadow: 0 30px 60px rgba(102, 126, 234, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       position: relative;
       overflow: visible;
     }
 
-    @keyframes gradientBG {
+    @keyframes gradientShift {
       0% {
         background-position: 0% 50%;
       }
@@ -762,38 +762,49 @@
     .net-worth-card::before {
       content: '';
       position: absolute;
-      top: -50px;
-      right: -50px;
-      width: 160px;
-      height: 160px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      animation: float 6s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    .net-worth-card::after {
-      content: '';
-      position: absolute;
-      bottom: -60px;
-      left: -35px;
-      width: 180px;
-      height: 180px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 50%;
-      animation: float 8s ease-in-out infinite reverse;
-      pointer-events: none;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+      animation: float 8s ease-in-out infinite;
     }
 
     @keyframes float {
 
       0%,
       100% {
-        transform: translateY(0) rotate(0deg);
+        transform: translate(0, 0) rotate(0deg);
       }
 
       50% {
-        transform: translateY(-12px) rotate(6deg);
+        transform: translate(20px, -20px) rotate(10deg);
+      }
+    }
+
+    .net-worth-card::after {
+      content: '';
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -30px;
+      right: -30px;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+
+      50% {
+        transform: scale(1.2);
+        opacity: 0.8;
       }
     }
 
@@ -4102,143 +4113,151 @@
 
     // Modal controls
     function openModal(type) {
-      // Populate account dropdowns
-      if (type === 'income' || type === 'expense') {
-        const select = document.getElementById(type + '-account');
-        if (select) {
-          select.innerHTML = accounts.map(a => `<option>${a.name}</option>`).join('');
-        }
-      }
-      // Populate transfer dropdowns
-      if (type === 'transfer') {
-        const fromSelect = document.getElementById('transfer-from');
-        const toSelect = document.getElementById('transfer-to');
-        if (fromSelect) {
-          fromSelect.innerHTML = accounts.map(a => `<option>${a.name}</option>`).join('');
-        }
-        if (toSelect) {
-          toSelect.innerHTML = accounts.map(a => `<option>${a.name}</option>`).join('');
-        }
-      }
-      // Populate lend account dropdown
-      if (type === 'lend') {
-        const lendAccountSelect = document.getElementById('lend-account');
-        if (lendAccountSelect) {
-          lendAccountSelect.innerHTML = accounts.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
-        }
-      }
-      // Populate deposit dropdowns
-      if (type === 'deposit') {
-        const goalSelect = document.getElementById('deposit-goal');
-        const accountSelect = document.getElementById('deposit-account');
-        if (goalSelect && goals.length > 0) {
-          goalSelect.innerHTML = goals.map(g => {
-            const remaining = g.target - g.current;
-            return `<option value="${g.id}">${g.name} (৳${remaining.toLocaleString()} left)</option>`;
-          }).join('');
-        } else if (goalSelect) {
-          goalSelect.innerHTML = '<option>No goals available</option>';
-        }
-        if (accountSelect) {
-          accountSelect.innerHTML = accounts.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
-        }
-      }
-      // Populate receive dropdown (people who owe you)
-      if (type === 'receive') {
-        const receiveSelect = document.getElementById('receive-person');
-        const receiveAccountSelect = document.getElementById('receive-account');
-        if (receiveSelect) {
-          // Group by person and calculate total remaining
-          const personTotals = {};
-          lendings.filter(l => l.type === 'lent' && (l.paid || 0) < l.amount).forEach(l => {
-            if (!personTotals[l.person]) {
-              personTotals[l.person] = 0;
-            }
-            personTotals[l.person] += (l.amount - (l.paid || 0));
-          });
-
-          // Clear and add default option first
-          receiveSelect.innerHTML = '<option value="">-- Select Person --</option>';
-          const options = Object.keys(personTotals).map(person => {
-            return `<option value="${person}">${person} (৳${personTotals[person].toLocaleString()} due)</option>`;
-          }).join('');
-          receiveSelect.innerHTML += options;
-          if (!options) {
-            receiveSelect.innerHTML += '<option value="">No pending lendings</option>';
-          } else {
-            // Auto-select first valid option
-            receiveSelect.selectedIndex = 1;
+      try {
+        // Populate account dropdowns
+        if (type === 'income' || type === 'expense') {
+          const select = document.getElementById(type + '-account');
+          if (select) {
+            select.innerHTML = accounts.map(a => `<option>${a.name}</option>`).join('');
           }
         }
-        if (receiveAccountSelect) {
-          receiveAccountSelect.innerHTML = accounts.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
-        }
-        // Reset amount field
-        const receiveAmount = document.getElementById('receive-amount');
-        if (receiveAmount) receiveAmount.value = '';
-      }
-      // Populate repay dropdown (people you owe)
-      if (type === 'repay') {
-        const repaySelect = document.getElementById('repay-person');
-        if (repaySelect) {
-          // Group by person and calculate total remaining
-          const personTotals = {};
-          lendings.filter(l => l.type === 'borrowed' && (l.paid || 0) < l.amount).forEach(l => {
-            if (!personTotals[l.person]) {
-              personTotals[l.person] = 0;
-            }
-            personTotals[l.person] += (l.amount - (l.paid || 0));
-          });
-
-          // Clear and add default option first
-          repaySelect.innerHTML = '<option value="">-- Select Person --</option>';
-          const options = Object.keys(personTotals).map(person => {
-            return `<option value="${person}">${person} (৳${personTotals[person].toLocaleString()} due)</option>`;
-          }).join('');
-          repaySelect.innerHTML += options;
-          if (!options) {
-            repaySelect.innerHTML += '<option value="">No pending borrowings</option>';
-          } else {
-            // Auto-select first valid option
-            repaySelect.selectedIndex = 1;
+        // Populate transfer dropdowns
+        if (type === 'transfer') {
+          const fromSelect = document.getElementById('transfer-from');
+          const toSelect = document.getElementById('transfer-to');
+          if (fromSelect) {
+            fromSelect.innerHTML = accounts.map(a => `<option>${a.name}</option>`).join('');
+          }
+          if (toSelect) {
+            toSelect.innerHTML = accounts.map(a => `<option>${a.name}</option>`).join('');
           }
         }
-        // Reset amount field
-        const repayAmount = document.getElementById('repay-amount');
-        if (repayAmount) repayAmount.value = '';
-      }
-      // Populate Monthly History table
-      if (type === 'history') {
-        const historyTable = document.getElementById('monthly-history-modal-table');
-        if (historyTable) {
-          const history = getMonthlyHistory();
-          if (history.length > 0) {
-            historyTable.innerHTML = `
-              <thead>
-                <tr>
-                  <th>Month</th>
-                  <th>Income</th>
-                  <th>Expense</th>
-                  <th>Saved</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${history.map(h => `
+        // Populate lend account dropdown
+        if (type === 'lend') {
+          const lendAccountSelect = document.getElementById('lend-account');
+          if (lendAccountSelect) {
+            lendAccountSelect.innerHTML = accounts.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
+          }
+        }
+        // Populate deposit dropdowns
+        if (type === 'deposit') {
+          const goalSelect = document.getElementById('deposit-goal');
+          const accountSelect = document.getElementById('deposit-account');
+          if (goalSelect && goals.length > 0) {
+            goalSelect.innerHTML = goals.map(g => {
+              const remaining = g.target - g.current;
+              return `<option value="${g.id}">${g.name} (৳${remaining.toLocaleString()} left)</option>`;
+            }).join('');
+          } else if (goalSelect) {
+            goalSelect.innerHTML = '<option>No goals available</option>';
+          }
+          if (accountSelect) {
+            accountSelect.innerHTML = accounts.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
+          }
+        }
+        // Populate receive dropdown (people who owe you)
+        if (type === 'receive') {
+          const receiveSelect = document.getElementById('receive-person');
+          const receiveAccountSelect = document.getElementById('receive-account');
+          if (receiveSelect) {
+            // Group by person and calculate total remaining
+            const personTotals = {};
+            lendings.filter(l => l.type === 'lent' && (l.paid || 0) < l.amount).forEach(l => {
+              if (!personTotals[l.person]) {
+                personTotals[l.person] = 0;
+              }
+              personTotals[l.person] += (l.amount - (l.paid || 0));
+            });
+
+            // Clear and add default option first
+            receiveSelect.innerHTML = '<option value="">-- Select Person --</option>';
+            const options = Object.keys(personTotals).map(person => {
+              return `<option value="${person}">${person} (৳${personTotals[person].toLocaleString()} due)</option>`;
+            }).join('');
+            receiveSelect.innerHTML += options;
+            if (!options) {
+              receiveSelect.innerHTML += '<option value="">No pending lendings</option>';
+            } else {
+              // Auto-select first valid option
+              receiveSelect.selectedIndex = 1;
+            }
+          }
+          if (receiveAccountSelect) {
+            receiveAccountSelect.innerHTML = accounts.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
+          }
+          // Reset amount field
+          const receiveAmount = document.getElementById('receive-amount');
+          if (receiveAmount) receiveAmount.value = '';
+        }
+        // Populate repay dropdown (people you owe)
+        if (type === 'repay') {
+          const repaySelect = document.getElementById('repay-person');
+          if (repaySelect) {
+            // Group by person and calculate total remaining
+            const personTotals = {};
+            lendings.filter(l => l.type === 'borrowed' && (l.paid || 0) < l.amount).forEach(l => {
+              if (!personTotals[l.person]) {
+                personTotals[l.person] = 0;
+              }
+              personTotals[l.person] += (l.amount - (l.paid || 0));
+            });
+
+            // Clear and add default option first
+            repaySelect.innerHTML = '<option value="">-- Select Person --</option>';
+            const options = Object.keys(personTotals).map(person => {
+              return `<option value="${person}">${person} (৳${personTotals[person].toLocaleString()} due)</option>`;
+            }).join('');
+            repaySelect.innerHTML += options;
+            if (!options) {
+              repaySelect.innerHTML += '<option value="">No pending borrowings</option>';
+            } else {
+              // Auto-select first valid option
+              repaySelect.selectedIndex = 1;
+            }
+          }
+          // Reset amount field
+          const repayAmount = document.getElementById('repay-amount');
+          if (repayAmount) repayAmount.value = '';
+        }
+        // Populate Monthly History table
+        if (type === 'history') {
+          const historyTable = document.getElementById('monthly-history-modal-table');
+          if (historyTable) {
+            const history = getMonthlyHistory();
+            if (history.length > 0) {
+              historyTable.innerHTML = `
+                <thead>
                   <tr>
-                    <td class="history-month">${h.month} ${h.year}</td>
-                    <td class="income">+৳${h.income.toLocaleString()}</td>
-                    <td class="expense">-৳${h.expense.toLocaleString()}</td>
-                    <td class="saved">৳${h.saved.toLocaleString()}</td>
+                    <th>Month</th>
+                    <th>Income</th>
+                    <th>Expense</th>
+                    <th>Saved</th>
                   </tr>
-                `).join('')}
-              </tbody>
-            `;
-          } else {
-            historyTable.innerHTML = '<tbody><tr><td colspan="4" style="text-align:center;color:#6b7280;padding:30px;">No history yet</td></tr></tbody>';
+                </thead>
+                <tbody>
+                  ${history.map(h => `
+                    <tr>
+                      <td class="history-month">${h.month} ${h.year}</td>
+                      <td class="income">+৳${h.income.toLocaleString()}</td>
+                      <td class="expense">-৳${h.expense.toLocaleString()}</td>
+                      <td class="saved">৳${h.saved.toLocaleString()}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              `;
+            } else {
+              historyTable.innerHTML = '<tbody><tr><td colspan="4" style="text-align:center;color:#6b7280;padding:30px;">No history yet</td></tr></tbody>';
+            }
           }
         }
+      } catch (e) {
+        console.error('Error populating modal:', e);
       }
-      document.getElementById(type + '-modal').classList.add('active');
+      // Always open the modal, even if there was an error populating it
+      const modal = document.getElementById(type + '-modal');
+      if (modal) {
+        modal.classList.add('active');
+      }
     }
 
     // Show Toast Notification
@@ -4312,9 +4331,16 @@
     }
 
     function openViewLendBorrowModal(type) {
-      document.getElementById('view-lendborrow-type').value = type;
-      updateLendBorrowList();
-      document.getElementById('view-lendborrow-modal').classList.add('active');
+      try {
+        document.getElementById('view-lendborrow-type').value = type;
+        updateLendBorrowList();
+      } catch (e) {
+        console.error('Error opening lend/borrow modal:', e);
+      }
+      const modal = document.getElementById('view-lendborrow-modal');
+      if (modal) {
+        modal.classList.add('active');
+      }
     }
 
     // Add Income
@@ -4346,7 +4372,7 @@
       if (incomeModal) incomeModal.classList.remove('active');
 
       saveData();
-      renderAll();
+      refreshUI();
       document.getElementById('income-amount').value = '';
     }
 
@@ -4380,7 +4406,7 @@
       var expenseModal = document.getElementById('expense-modal');
       if (expenseModal) expenseModal.classList.remove('active');
 
-      renderAll();
+      refreshUI();
       document.getElementById('expense-amount').value = '';
     }
 
@@ -4429,7 +4455,7 @@
       var lendModal = document.getElementById('lend-modal');
       if (lendModal) lendModal.classList.remove('active');
 
-      renderAll();
+      refreshUI();
     }
 
     // Add Borrow
@@ -4468,7 +4494,7 @@
       var borrowModal = document.getElementById('borrow-modal');
       if (borrowModal) borrowModal.classList.remove('active');
 
-      renderAll();
+      refreshUI();
     }
 
     // Receive Lent Money
@@ -4538,7 +4564,7 @@
       if (receiveModal) receiveModal.classList.remove('active');
 
       saveData();
-      renderAll();
+      refreshUI();
     }
 
     // Repay Borrowed Money
@@ -4605,7 +4631,7 @@
       if (repayModal) repayModal.classList.remove('active');
 
       saveData();
-      renderAll();
+      refreshUI();
     }
 
     // Add Transfer
@@ -4646,7 +4672,7 @@
       var transferModal = document.getElementById('transfer-modal');
       if (transferModal) transferModal.classList.remove('active');
 
-      renderAll();
+      refreshUI();
       document.getElementById('transfer-amount').value = '';
     }
 
@@ -4670,7 +4696,7 @@
       var accountModal = document.getElementById('account-modal');
       if (accountModal) accountModal.classList.remove('active');
 
-      renderAll();
+      refreshUI();
     }
 
     // Confirm Delete Account
@@ -4695,7 +4721,7 @@
         // Also remove transactions for this account
         transactions = transactions.filter(t => t.account !== accounts.find(a => a.id === accountToDelete)?.name);
         saveData();
-        renderAll();
+        refreshUI();
         accountToDelete = null;
       }
     }
@@ -4733,7 +4759,7 @@
         });
 
         saveData();
-        renderAll();
+        refreshUI();
       }
     }
 
@@ -4758,7 +4784,7 @@
       var goalModal = document.getElementById('goal-modal');
       if (goalModal) goalModal.classList.remove('active');
 
-      renderAll();
+      refreshUI();
     }
 
     // Calculate net worth
@@ -5401,7 +5427,7 @@
       var depositModal = document.getElementById('deposit-modal');
       if (depositModal) depositModal.classList.remove('active');
 
-      renderAll();
+      refreshUI();
     }
 
     // Add to goal
