@@ -53,6 +53,23 @@
       position: relative;
       display: flex;
       flex-direction: column;
+      padding-bottom: 80px;
+    }
+
+    /* Screens */
+    .screen {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      padding: 16px;
+      padding-bottom: 100px;
+    }
+
+    .screen::-webkit-scrollbar {
+      display: none;
     }
 
     /* Mobile-first: full screen app */
@@ -66,11 +83,16 @@
       .app-container {
         max-width: 800px;
         margin: 0 auto;
-        border-radius: 30px;
-        min-height: calc(100vh - 60px);
-        margin-top: 30px;
-        margin-bottom: 30px;
         box-shadow: 0 30px 60px rgba(147, 51, 234, 0.25), 0 15px 35px rgba(236, 72, 153, 0.2);
+      }
+
+      .bottom-nav {
+        max-width: 800px;
+        left: 0;
+        right: 0;
+        width: 100%;
+        transform: none;
+        border-radius: 0;
       }
     }
 
@@ -83,21 +105,31 @@
       }
     }
 
+    /* Keep bottom nav full width on mobile */
+    @media (max-width: 1023px) {
+      .bottom-nav {
+        max-width: 100%;
+        left: 0;
+        right: 0;
+        width: 100%;
+        transform: none;
+        border-radius: 0;
+      }
+    }
+
     .app-container {
       max-width: 100%;
       width: 100%;
       height: 100vh;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 30px;
-      box-shadow: 0 30px 60px rgba(147, 51, 234, 0.25), 0 15px 35px rgba(236, 72, 153, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
       overflow: hidden;
       position: relative;
-      margin: 0 auto;
       display: flex;
       flex-direction: column;
+      padding-bottom: 80px;
     }
 
     /* Net Worth Card - Base Mobile Styles */
@@ -160,24 +192,34 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(10px);
-      padding: 6px 3px;
-      border-radius: 10px;
+      padding: 10px 8px;
+      border-radius: 14px;
       width: 100%;
-      gap: 2px;
+      gap: 4px;
       transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-value.income {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+
+    .stat-value.expense {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .stat-value.saved {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: white;
     }
 
     .stat-value i {
-      font-size: 11px;
-      margin-bottom: 1px;
+      font-size: 14px;
     }
 
     .stat-label {
-      font-size: 8px;
-      opacity: 0.85;
+      font-size: 9px;
       font-weight: 600;
       text-align: center;
       text-transform: uppercase;
@@ -186,17 +228,17 @@
 
     .stat-amount {
       font-weight: 700;
-      font-size: 9px;
+      font-size: 11px;
       text-align: center;
     }
 
     /* Quick Actions - Base Mobile Styles */
     .quick-actions {
       display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      margin: 12px 0 12px 0;
-      padding: 0 2px;
+      justify-content: space-around;
+      gap: 8px;
+      margin: 12px 8px;
+      padding: 0;
     }
 
     .action-btn {
@@ -205,26 +247,26 @@
       align-items: center;
       gap: 4px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 10px 6px;
+      padding: 12px 10px;
       border-radius: 14px;
-      width: 100%;
+      flex: 1;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
       border: none;
     }
 
     .action-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 14px;
     }
 
     .action-label {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 600;
       color: white;
     }
@@ -1076,28 +1118,39 @@
 
     /* Bottom Navigation */
     .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      max-width: 100%;
       display: flex;
       justify-content: space-around;
-      background: rgba(255, 255, 255, 0.95);
+      align-items: center;
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       padding: 12px 8px;
-      border-radius: 0 0 40px 40px;
-      border-top: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 -4px 15px rgba(168, 85, 247, 0.1);
-      z-index: 100;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(168, 85, 247, 0.2);
+      box-shadow: 0 -4px 20px rgba(168, 85, 247, 0.15);
+      z-index: 1000;
       flex-shrink: 0;
+      box-sizing: border-box;
     }
 
     .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       color: #9b6b9b;
       font-size: 12px;
       font-weight: 500;
       transition: all 0.2s;
       cursor: pointer;
       gap: 2px;
+      padding: 8px 10px;
     }
 
     .nav-item i {
@@ -2728,24 +2781,16 @@
           <div class="month-label" id="month-label"></div>
           <div class="month-stats">
             <div class="stat-item">
-              <div class="stat-value" id="month-income"><i class="fas fa-arrow-up trend-up"></i><span
+              <div class="stat-value income" id="month-income"><i class="fas fa-arrow-up"></i><span
                   class="stat-label">Income</span><span class="stat-amount">৳0</span></div>
             </div>
             <div class="stat-item">
-              <div class="stat-value" id="month-expense"><i class="fas fa-arrow-down trend-down"></i><span
+              <div class="stat-value expense" id="month-expense"><i class="fas fa-arrow-down"></i><span
                   class="stat-label">Expense</span><span class="stat-amount">৳0</span></div>
             </div>
             <div class="stat-item">
-              <div class="stat-value" id="month-saved"><i class="fas fa-university" style="color:#8b5cf6;"></i><span
+              <div class="stat-value saved" id="month-saved"><i class="fas fa-university"></i><span
                   class="stat-label">Saved</span><span class="stat-amount">৳0</span></div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value" id="month-lent"><i class="fas fa-arrow-right" style="color:#fecaca;"></i><span
-                  class="stat-label">Lent</span><span class="stat-amount" style="color:#fff;">৳0</span></div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value" id="month-borrowed"><i class="fas fa-arrow-left" style="color:#a7f3d0;"></i><span
-                  class="stat-label">Borrowed</span><span class="stat-amount" style="color:#fff;">৳0</span></div>
             </div>
           </div>
         </div>
@@ -2773,11 +2818,6 @@
             <div class="action-icon" style="background: rgba(255,255,255,0.25);"><i class="fas fa-minus"></i></div><span
               class="action-label">Expense</span>
           </div>
-          <div class="action-btn" onclick="openModal('transfer')"
-            style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
-            <div class="action-icon" style="background: rgba(255,255,255,0.25);"><i class="fas fa-exchange-alt"></i>
-            </div><span class="action-label">Transfer</span>
-          </div>
           <div class="action-btn" onclick="openModal('lend')"
             style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">
             <div class="action-icon" style="background: rgba(255,255,255,0.25);"><i
@@ -2801,6 +2841,11 @@
             style="background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);">
             <div class="action-icon" style="background: rgba(255,255,255,0.25);"><i class="fas fa-credit-card"></i>
             </div><span class="action-label">Repay</span>
+          </div>
+          <div class="action-btn" onclick="openModal('transfer')"
+            style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+            <div class="action-icon" style="background: rgba(255,255,255,0.25);"><i class="fas fa-exchange-alt"></i>
+            </div><span class="action-label">Transfer</span>
           </div>
           <div class="action-btn" onclick="openModal('history')"
             style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
@@ -4506,11 +4551,24 @@
         document.getElementById('month-label').innerText = stats.monthName + ' ' + new Date().getFullYear();
       }
 
-      document.getElementById('month-income').innerHTML = '<i class="fas fa-arrow-up trend-up"></i><span class="stat-label">Income</span><span class="stat-amount">৳' + stats.income.toLocaleString() + '</span>';
-      document.getElementById('month-expense').innerHTML = '<i class="fas fa-arrow-down trend-down"></i><span class="stat-label">Expense</span><span class="stat-amount">৳' + stats.expense.toLocaleString() + '</span>';
-      document.getElementById('month-saved').innerHTML = '<i class="fas fa-university" style="color:#8b5cf6;"></i><span class="stat-label">Saved</span><span class="stat-amount">৳' + stats.saved.toLocaleString() + '</span>';
-      document.getElementById('month-lent').innerHTML = '<i class="fas fa-arrow-right" style="color:#fecaca;"></i><span class="stat-label">Lent</span><span class="stat-amount" style="color:#fff;">৳' + stats.lent.toLocaleString() + '</span>';
-      document.getElementById('month-borrowed').innerHTML = '<i class="fas fa-arrow-left" style="color:#a7f3d0;"></i><span class="stat-label">Borrowed</span><span class="stat-amount" style="color:#fff;">৳' + stats.borrowed.toLocaleString() + '</span>';
+      document.getElementById('month-income').innerHTML = '<i class="fas fa-arrow-up"></i><span class="stat-label">Income</span><span class="stat-amount">৳' + stats.income.toLocaleString() + '</span>';
+      document.getElementById('month-expense').innerHTML = '<i class="fas fa-arrow-down"></i><span class="stat-label">Expense</span><span class="stat-amount">৳' + stats.expense.toLocaleString() + '</span>';
+      const incomeEl = document.getElementById('month-income');
+      const expenseEl = document.getElementById('month-expense');
+      const savedEl = document.getElementById('month-saved');
+
+      if (incomeEl) {
+        incomeEl.className = 'stat-value income';
+        incomeEl.innerHTML = '<i class="fas fa-arrow-up"></i><span class="stat-label">Income</span><span class="stat-amount">৳' + stats.income.toLocaleString() + '</span>';
+      }
+      if (expenseEl) {
+        expenseEl.className = 'stat-value expense';
+        expenseEl.innerHTML = '<i class="fas fa-arrow-down"></i><span class="stat-label">Expense</span><span class="stat-amount">৳' + stats.expense.toLocaleString() + '</span>';
+      }
+      if (savedEl) {
+        savedEl.className = 'stat-value saved';
+        savedEl.innerHTML = '<i class="fas fa-university"></i><span class="stat-label">Saved</span><span class="stat-amount">৳' + stats.saved.toLocaleString() + '</span>';
+      }
 
 
       // Update category breakdown
