@@ -34,8 +34,8 @@
     html,
     body {
       background: linear-gradient(145deg, #f9f0f5 0%, #efe9ff 100%);
-      min-height: 100vh;
-      height: 100%;
+      min-height: 100dvh;
+      height: 100dvh;
       display: block;
       padding: 0;
       margin: 0;
@@ -45,8 +45,8 @@
     .app-container {
       max-width: 100%;
       width: 100%;
-      min-height: 100vh;
-      height: 100%;
+      min-height: 100dvh;
+      height: 100dvh;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 0;
       box-shadow: none;
@@ -118,7 +118,7 @@
     .app-container {
       max-width: 100%;
       width: 100%;
-      height: 100vh;
+      height: 100dvh;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 0;
       box-shadow: none;
@@ -592,7 +592,7 @@
     .app-container {
       max-width: 420px;
       width: 100%;
-      height: 100vh;
+      height: 100dvh;
       background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -696,22 +696,56 @@
       font-size: 20px;
     }
 
+    .notification-bell {
+      position: relative;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .notification-bell:hover {
+      transform: scale(1.1);
+    }
+
+    .notification-bell .fa-bell,
+    .fa-user-circle {
+      cursor: pointer;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ef4444;
+      color: white;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 2px 5px;
+      border-radius: 10px;
+      min-width: 16px;
+      text-align: center;
+      display: none;
+    }
+
+    .notification-badge.has-notifications {
+      display: block;
+    }
+
     /* Net Worth Card - Modern Animated Redesign */
     .net-worth-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f43f5e 100%);
-      background-size: 200% 200%;
-      animation: gradientShift 6s ease infinite;
-      border-radius: 36px;
-      padding: 32px 30px;
-      margin-bottom: 24px;
+      background: linear-gradient(145deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+      background-size: 400% 400%;
+      animation: gradientBG 8s ease infinite;
+      border-radius: 28px;
+      padding: 32px;
+      margin-bottom: 22px;
       color: white;
-      box-shadow: 0 30px 60px rgba(102, 126, 234, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 22px 60px rgba(102, 126, 234, 0.4);
+      animation: fadeInUp 0.5s ease forwards;
       position: relative;
       overflow: visible;
     }
 
-    @keyframes gradientShift {
+    @keyframes gradientBG {
       0% {
         background-position: 0% 50%;
       }
@@ -728,49 +762,38 @@
     .net-worth-card::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
-      animation: float 8s ease-in-out infinite;
+      top: -50px;
+      right: -50px;
+      width: 160px;
+      height: 160px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .net-worth-card::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: -35px;
+      width: 180px;
+      height: 180px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      animation: float 8s ease-in-out infinite reverse;
+      pointer-events: none;
     }
 
     @keyframes float {
 
       0%,
       100% {
-        transform: translate(0, 0) rotate(0deg);
+        transform: translateY(0) rotate(0deg);
       }
 
       50% {
-        transform: translate(20px, -20px) rotate(10deg);
-      }
-    }
-
-    .net-worth-card::after {
-      content: '';
-      position: absolute;
-      width: 150px;
-      height: 150px;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-      border-radius: 50%;
-      top: -30px;
-      right: -30px;
-      animation: pulse 4s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 0.5;
-      }
-
-      50% {
-        transform: scale(1.2);
-        opacity: 0.8;
+        transform: translateY(-12px) rotate(6deg);
       }
     }
 
@@ -2796,6 +2819,22 @@
 </head>
 
 <body>
+  <!-- Notification Modal -->
+  <div id="notification-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-bell" style="color:#7c3aed;"></i> Notifications</h3>
+        <span class="close-modal" onclick="closeModal('notification')">&times;</span>
+      </div>
+      <div id="notification-list" style="max-height: 400px; overflow-y: auto;">
+        <p style="text-align:center;color:#6b7280;padding:20px;">No notifications</p>
+      </div>
+      <button onclick="clearAllNotifications()"
+        style="margin-top:16px;background:#f3f4f6;color:#374151;border:none;padding:12px;border-radius:8px;width:100%;cursor:pointer;">Clear
+        All</button>
+    </div>
+  </div>
+
   <!-- Login Screen -->
   <div id="login-screen" class="login-overlay">
     <div class="login-card">
@@ -2820,8 +2859,13 @@
             <span class="app-title">Bloom</span>
           </div>
           <div class="header-icons">
-            <i class="fas fa-bell"></i>
-            <i class="fas fa-user-circle"></i>
+            <div class="notification-bell" onclick="openNotifications()">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge" id="notification-badge">0</span>
+            </div>
+            <div class="notification-bell" onclick="openModal('password')" title="Settings">
+              <i class="fas fa-user-circle"></i>
+            </div>
           </div>
         </div>
 
@@ -3089,10 +3133,6 @@
           <p style="color:#6b7280;font-size:14px;margin-bottom:16px;">Currency: BDT ৳ · PIN lock · Dark mode</p>
 
           <div style="display:flex;flex-direction:column;gap:12px;">
-            <button class="settings-btn" onclick="openModal('password')"
-              style="background:linear-gradient(135deg, #7c3aed, #a855f7); color:white; border:none; padding:16px 20px; border-radius:16px; width:100%;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(124,58,237,0.35);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;">
-              <i class="fas fa-lock"></i> Change Password
-            </button>
             <button class="settings-btn" onclick="openModal('jsonbin')"
               style="background:linear-gradient(135deg, #06b6d4, #0891b2); color:white; border:none; padding:16px 20px; border-radius:16px; width:100%;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(6,182,212,0.35);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;">
               <i class="fas fa-cloud-upload-alt"></i> Cloud Sync
@@ -3606,6 +3646,199 @@
     // Default password
     const DEFAULT_PASSWORD = '1234';
 
+    // Notification System
+    let notifications = JSON.parse(localStorage.getItem('bloom_notifications') || '[]');
+    const NOTIFICATION_CHECK_INTERVAL = 60000; // Check every minute
+
+    // Request notification permission
+    function requestNotificationPermission() {
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }
+
+    // Check and create due date notifications
+    function checkDueDateNotifications() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const threeDaysLater = new Date(today);
+      threeDaysLater.setDate(threeDaysLater.getDate() + 3);
+
+      // Check lendings for upcoming due dates
+      lendings.forEach(lending => {
+        if (lending.dueDate && lending.amount > (lending.paid || 0)) {
+          const dueDate = new Date(lending.dueDate);
+          dueDate.setHours(0, 0, 0, 0);
+
+          const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+
+          // Create notification if due within 3 days or overdue
+          if (daysUntilDue <= 3 && daysUntilDue >= -7) {
+            const existingNotification = notifications.find(n =>
+              n.lendingId === lending.id && n.type === 'due_date'
+            );
+
+            if (!existingNotification) {
+              let message = '';
+              let urgency = 'warning';
+
+              if (daysUntilDue < 0) {
+                message = `${lending.person}'s payment is ${Math.abs(daysUntilDue)} days overdue!`;
+                urgency = 'urgent';
+              } else if (daysUntilDue === 0) {
+                message = `Payment from ${lending.person} is due today!`;
+                urgency = 'urgent';
+              } else {
+                message = `Payment from ${lending.person} is due in ${daysUntilDue} day(s)`;
+              }
+
+              const notification = {
+                id: Date.now(),
+                lendingId: lending.id,
+                type: 'due_date',
+                message: message,
+                amount: lending.amount - (lending.paid || 0),
+                person: lending.person,
+                dueDate: lending.dueDate,
+                urgency: urgency,
+                timestamp: new Date().toISOString(),
+                read: false
+              };
+
+              notifications.unshift(notification);
+              saveNotifications();
+              showNotificationAlert(notification);
+            }
+          }
+        }
+      });
+
+      updateNotificationBadge();
+    }
+
+    // Show notification alert with vibration and sound
+    function showNotificationAlert(notification) {
+      // Vibrate on mobile devices
+      if (navigator.vibrate) {
+        if (notification.urgency === 'urgent') {
+          navigator.vibrate([200, 100, 200]);
+        } else {
+          navigator.vibrate(100);
+        }
+      }
+
+      // Show browser notification if permitted
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Bloom Finance', {
+          body: notification.message,
+          icon: 'https://cdn-icons-png.flaticon.com/512/2659/2659980.png',
+          tag: notification.id
+        });
+      }
+
+      // Play notification sound
+      playNotificationSound();
+
+      // Show in-app toast
+      showToast(notification.message, notification.urgency === 'urgent' ? 'error' : 'warning');
+    }
+
+    // Play notification sound
+    function playNotificationSound() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+      } catch (e) {
+        console.log('Audio not supported');
+      }
+    }
+
+    // Update notification badge
+    function updateNotificationBadge() {
+      const badge = document.getElementById('notification-badge');
+      if (badge) {
+        const unreadCount = notifications.filter(n => !n.read).length;
+        badge.textContent = unreadCount;
+        if (unreadCount > 0) {
+          badge.classList.add('has-notifications');
+        } else {
+          badge.classList.remove('has-notifications');
+        }
+      }
+    }
+
+    // Open notifications modal
+    function openNotifications() {
+      requestNotificationPermission();
+      renderNotificationList();
+      document.getElementById('notification-modal').classList.add('active');
+
+      // Mark all as read
+      notifications.forEach(n => n.read = true);
+      saveNotifications();
+      updateNotificationBadge();
+    }
+
+    // Render notification list
+    function renderNotificationList() {
+      const container = document.getElementById('notification-list');
+      if (!container) return;
+
+      if (notifications.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#6b7280;padding:20px;">No notifications</p>';
+        return;
+      }
+
+      container.innerHTML = notifications.map(n => {
+        const date = new Date(n.timestamp);
+        const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const urgencyColor = n.urgency === 'urgent' ? '#ef4444' : n.urgency === 'warning' ? '#f59e0b' : '#10b981';
+
+        return `
+          <div style="padding:12px;border-bottom:1px solid #e5e7eb;display:flex;align-items:start;gap:12px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:${urgencyColor};margin-top:6px;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-weight:600;color:#1f2937;font-size:14px;">${n.message}</div>
+              <div style="font-size:12px;color:#6b7280;margin-top:4px;">${dateStr}</div>
+              ${n.amount ? `<div style="font-size:14px;font-weight:700;color:#7c3aed;margin-top:4px;">৳${n.amount.toLocaleString()}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Clear all notifications
+    function clearAllNotifications() {
+      notifications = [];
+      saveNotifications();
+      updateNotificationBadge();
+      renderNotificationList();
+      showToast('All notifications cleared', 'success');
+    }
+
+    // Save notifications to localStorage
+    function saveNotifications() {
+      localStorage.setItem('bloom_notifications', JSON.stringify(notifications));
+    }
+
+    // Start notification checking
+    function startNotificationChecker() {
+      checkDueDateNotifications();
+      setInterval(checkDueDateNotifications, NOTIFICATION_CHECK_INTERVAL);
+    }
+
     // JSONBin.io Configuration
     const JSONBIN_API_URL = 'https://api.jsonbin.io/v3/b';
     let jsonBinConfig = {
@@ -3727,6 +3960,8 @@
     if (localStorage.getItem('bloom_logged_in') === 'true') {
       document.getElementById('login-screen').style.display = 'none';
       document.querySelector('.app-container').style.display = 'flex';
+      updateNotificationBadge();
+      startNotificationChecker();
     }
 
     function checkLogin() {
@@ -3737,6 +3972,8 @@
         localStorage.setItem('bloom_logged_in', 'true');
         document.getElementById('login-screen').style.display = 'none';
         document.querySelector('.app-container').style.display = 'flex';
+        updateNotificationBadge();
+        startNotificationChecker();
       } else {
         document.getElementById('login-error').textContent = 'Incorrect password. Try again!';
       }
@@ -4942,7 +5179,13 @@
 
       // Goals list
       const goalsList = document.getElementById('goals-list');
+      const emptyGoals = document.getElementById('empty-goals');
       if (goalsList) {
+        if (goals.length === 0 && emptyGoals) {
+          emptyGoals.style.display = 'block';
+        } else if (emptyGoals) {
+          emptyGoals.style.display = 'none';
+        }
         goalsList.innerHTML = goals.map((g, index) => {
           const percent = Math.round((g.current / g.target) * 100);
           const goalPercent = Math.min(percent, 100);
@@ -5226,6 +5469,21 @@
     window.showScreen = showScreen;
     window.openModal = openModal;
     window.closeModal = closeModal;
+    window.openNotifications = openNotifications;
+    window.clearAllNotifications = clearAllNotifications;
+    window.toggleSettingsMenu = function (event) {
+      event.stopPropagation();
+      const menu = document.getElementById('settings-menu');
+      menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+    };
+
+    // Close settings menu when clicking outside
+    document.addEventListener('click', function (event) {
+      const menu = document.getElementById('settings-menu');
+      if (menu && !menu.contains(event.target) && !event.target.closest('.fa-user-circle')) {
+        menu.style.display = 'none';
+      }
+    });
     window.addIncome = addIncome;
     window.addExpense = addExpense;
     window.addTransfer = addTransfer;
