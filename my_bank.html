@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#8b5cf6">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
@@ -3501,9 +3502,7 @@
           <option value="cash">💵 Cash</option>
         </select>
       </div>
-      <button type="button" class="btn-save"
-        onclick="document.getElementById('account-modal').classList.remove('active'); addAccount()">Create
-        Account</button>
+      <button type="button" class="btn-save" onclick="addAccount()">Create Account</button>
       <button class="btn-cancel" onclick="closeModal('account')">Cancel</button>
     </div>
   </div>
@@ -3656,6 +3655,12 @@
   </div>
 
   <script>
+    // App State - MUST be at the top before any function that uses these
+    let accounts = [];
+    let transactions = [];
+    let goals = [];
+    let lendings = [];
+
     // Default password
     const DEFAULT_PASSWORD = '1234';
 
@@ -4086,12 +4091,6 @@
       }
     });
 
-    // App State
-    let accounts = [];
-    let transactions = [];
-    let goals = [];
-    let lendings = []; // borrowed/lent
-
     // Load from localStorage
     function loadData() {
       try {
@@ -4142,10 +4141,12 @@
         localStorage.setItem('bloom_transactions', JSON.stringify(transactions));
         localStorage.setItem('bloom_goals', JSON.stringify(goals));
         localStorage.setItem('bloom_lendings', JSON.stringify(lendings));
-        console.log('Data saved to localStorage');
+        console.log('Data saved:', accounts, transactions, goals, lendings);
+        showToast('Data saved!', 'success');
         refreshUI();
       } catch (e) {
         console.error('Error saving data:', e);
+        showToast('Error saving data', 'error');
       }
     }
 
@@ -4732,25 +4733,32 @@
 
     // Add Account
     function addAccount() {
-      const name = document.getElementById('account-name').value;
-      const balance = parseFloat(document.getElementById('account-balance').value) || 0;
-      const icon = document.getElementById('account-icon').value;
+      try {
+        const name = document.getElementById('account-name').value;
+        const balance = parseFloat(document.getElementById('account-balance').value) || 0;
+        const icon = document.getElementById('account-icon')?.value || 'wallet';
 
-      if (!name) return showToast('Account name required', 'warning');
+        if (!name) {
+          return showToast('Account name required', 'warning');
+        }
 
-      accounts.push({
-        id: Date.now(),
-        name,
-        balance,
-        icon
-      });
+        accounts.push({
+          id: Date.now(),
+          name,
+          balance,
+          icon
+        });
 
-      saveData();
-      // Close modal
-      var accountModal = document.getElementById('account-modal');
-      if (accountModal) accountModal.classList.remove('active');
+        saveData();
 
-      refreshUI();
+        // Close modal
+        var accountModal = document.getElementById('account-modal');
+        if (accountModal) accountModal.classList.remove('active');
+
+        refreshUI();
+      } catch (e) {
+        console.error('Error adding account:', e);
+      }
     }
 
     // Confirm Delete Account
