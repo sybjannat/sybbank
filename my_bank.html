@@ -3914,52 +3914,6 @@
       }
     }
 
-    // Save data (local + cloud)
-    async function saveData() {
-      // Always save locally first
-      localStorage.setItem('bloom_accounts', JSON.stringify(accounts));
-      localStorage.setItem('bloom_transactions', JSON.stringify(transactions));
-      localStorage.setItem('bloom_goals', JSON.stringify(goals));
-      localStorage.setItem('bloom_lendings', JSON.stringify(lendings));
-      refreshUI();
-
-      // Try to save to cloud
-      if (isJsonBinConfigured()) {
-        const success = await saveToJsonBin();
-        if (success) {
-          showToast('Data saved to cloud!', 'success');
-        }
-      }
-    }
-
-    // Load data (cloud + local)
-    async function loadData() {
-      // First try to load from JSONBin
-      let cloudData = null;
-      if (isJsonBinConfigured()) {
-        cloudData = await loadFromJsonBin();
-      }
-
-      // Use cloud data if available, otherwise use local
-      const data = cloudData || {
-        accounts: [],
-        transactions: [],
-        goals: [],
-        lendings: []
-      };
-
-      accounts = data.accounts || [];
-      transactions = data.transactions || [];
-      goals = data.goals || [];
-      lendings = data.lendings || [];
-
-      // Also save locally as backup
-      localStorage.setItem('bloom_accounts', JSON.stringify(accounts));
-      localStorage.setItem('bloom_transactions', JSON.stringify(transactions));
-      localStorage.setItem('bloom_goals', JSON.stringify(goals));
-      localStorage.setItem('bloom_lendings', JSON.stringify(lendings));
-    }
-
     // Configure JSONBin
     function configureJsonBin(binId, apiKey) {
       jsonBinConfig.binId = binId;
@@ -4140,43 +4094,59 @@
 
     // Load from localStorage
     function loadData() {
-      const savedAccounts = localStorage.getItem('bloom_accounts');
-      const savedTransactions = localStorage.getItem('bloom_transactions');
-      const savedGoals = localStorage.getItem('bloom_goals');
-      const savedLendings = localStorage.getItem('bloom_lendings');
+      try {
+        const savedAccounts = localStorage.getItem('bloom_accounts');
+        const savedTransactions = localStorage.getItem('bloom_transactions');
+        const savedGoals = localStorage.getItem('bloom_goals');
+        const savedLendings = localStorage.getItem('bloom_lendings');
 
-      if (savedAccounts) accounts = JSON.parse(savedAccounts);
-      else {
-        // Start with empty accounts - user can add their own
+        if (savedAccounts) {
+          accounts = JSON.parse(savedAccounts);
+          console.log('Loaded accounts:', accounts);
+        } else {
+          accounts = [];
+        }
+
+        if (savedTransactions) {
+          transactions = JSON.parse(savedTransactions);
+        } else {
+          transactions = [];
+        }
+
+        if (savedGoals) {
+          goals = JSON.parse(savedGoals);
+        } else {
+          goals = [];
+        }
+
+        if (savedLendings) {
+          lendings = JSON.parse(savedLendings);
+        } else {
+          lendings = [];
+        }
+
+        console.log('Data loaded from localStorage');
+      } catch (e) {
+        console.error('Error loading data:', e);
         accounts = [];
-      }
-
-      if (savedTransactions) transactions = JSON.parse(savedTransactions);
-      else {
-        // Start with empty transactions
         transactions = [];
-      }
-
-      if (savedGoals) goals = JSON.parse(savedGoals);
-      else {
-        // Start with empty goals
         goals = [];
-      }
-
-      if (savedLendings) lendings = JSON.parse(savedLendings);
-      else {
-        // Start with empty lendings
         lendings = [];
       }
     }
 
-    // Save to localStorage
+    // Save data to localStorage
     function saveData() {
-      localStorage.setItem('bloom_accounts', JSON.stringify(accounts));
-      localStorage.setItem('bloom_transactions', JSON.stringify(transactions));
-      localStorage.setItem('bloom_goals', JSON.stringify(goals));
-      localStorage.setItem('bloom_lendings', JSON.stringify(lendings));
-      refreshUI();
+      try {
+        localStorage.setItem('bloom_accounts', JSON.stringify(accounts));
+        localStorage.setItem('bloom_transactions', JSON.stringify(transactions));
+        localStorage.setItem('bloom_goals', JSON.stringify(goals));
+        localStorage.setItem('bloom_lendings', JSON.stringify(lendings));
+        console.log('Data saved to localStorage');
+        refreshUI();
+      } catch (e) {
+        console.error('Error saving data:', e);
+      }
     }
 
     // Screen management
