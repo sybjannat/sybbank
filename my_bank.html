@@ -3966,7 +3966,42 @@
       jsonBinConfig.apiKey = apiKey;
       localStorage.setItem('bloom_bin_id', binId);
       localStorage.setItem('bloom_api_key', apiKey);
-      showToast('Cloud sync configured!', 'success');
+
+      // Test the connection immediately
+      testJsonBinConnection();
+    }
+
+    // Test JSONBin connection
+    async function testJsonBinConnection() {
+      if (!isJsonBinConfigured()) {
+        showToast('Please enter Bin ID and API Key', 'warning');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${JSONBIN_API_URL}/${jsonBinConfig.binId}/latest`, {
+          method: 'GET',
+          headers: {
+            'X-Master-Key': jsonBinConfig.apiKey
+          }
+        });
+
+        if (response.ok) {
+          showToast('Cloud sync connected successfully!', 'success');
+          // Upload current data to cloud
+          await saveToJsonBin();
+          showToast('Data uploaded to cloud!', 'success');
+        } else if (response.status === 404) {
+          showToast('Bin not found. Check your Bin ID.', 'error');
+        } else if (response.status === 401) {
+          showToast('Invalid API Key. Check your credentials.', 'error');
+        } else {
+          showToast('Cloud sync connected!', 'success');
+        }
+      } catch (error) {
+        console.error('JSONBin connection error:', error);
+        showToast('Could not connect to cloud. Check your internet.', 'error');
+      }
     }
 
     // Check if already logged in
