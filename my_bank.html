@@ -4324,21 +4324,57 @@
 
       // Then try to save to Supabase
       try {
+        // Ensure all required fields exist with defaults
+        const accountsToSave = accounts.map(a => ({
+          id: a.id?.toString() || Date.now().toString(),
+          name: a.name || '',
+          type: a.type || 'cash',
+          balance: a.balance || 0,
+          color: a.color || '#10b981',
+          icon: a.icon || 'wallet'
+        }));
+
+        const transactionsToSave = transactions.map(t => ({
+          id: t.id?.toString() || Date.now().toString(),
+          amount: t.amount || 0,
+          type: t.type || 'expense',
+          category: t.category || '',
+          description: t.description || '',
+          account_id: t.account_id || '',
+          date: t.date || new Date().toISOString().split('T')[0]
+        }));
+
+        const goalsToSave = goals.map(g => ({
+          id: g.id?.toString() || Date.now().toString(),
+          name: g.name || '',
+          target_amount: g.target_amount || 0,
+          current_amount: g.current_amount || 0,
+          deadline: g.deadline || ''
+        }));
+
+        const lendingsToSave = lendings.map(l => ({
+          id: l.id?.toString() || Date.now().toString(),
+          person_name: l.person_name || l.person || '',
+          amount: l.amount || 0,
+          lent_date: l.lent_date || l.date || '',
+          status: l.status || 'active'
+        }));
+
         // Use upsert to insert or update records
-        if (accounts.length > 0) {
-          const { error } = await supabaseDb.from('accounts').upsert(accounts, { onConflict: 'id' });
+        if (accountsToSave.length > 0) {
+          const { error } = await supabaseDb.from('accounts').upsert(accountsToSave, { onConflict: 'id' });
           if (error) console.error('Accounts upsert error:', error);
         }
-        if (transactions.length > 0) {
-          const { error } = await supabaseDb.from('transactions').upsert(transactions, { onConflict: 'id' });
+        if (transactionsToSave.length > 0) {
+          const { error } = await supabaseDb.from('transactions').upsert(transactionsToSave, { onConflict: 'id' });
           if (error) console.error('Transactions upsert error:', error);
         }
-        if (goals.length > 0) {
-          const { error } = await supabaseDb.from('goals').upsert(goals, { onConflict: 'id' });
+        if (goalsToSave.length > 0) {
+          const { error } = await supabaseDb.from('goals').upsert(goalsToSave, { onConflict: 'id' });
           if (error) console.error('Goals upsert error:', error);
         }
-        if (lendings.length > 0) {
-          const { error } = await supabaseDb.from('lendings').upsert(lendings, { onConflict: 'id' });
+        if (lendingsToSave.length > 0) {
+          const { error } = await supabaseDb.from('lendings').upsert(lendingsToSave, { onConflict: 'id' });
           if (error) console.error('Lendings upsert error:', error);
         }
 
@@ -4833,7 +4869,7 @@
       // Add to selected account balance (create account if not exists)
       let account = accounts.find(a => a.name === accountName);
       if (!account) {
-        account = { id: Date.now(), name: accountName, balance: 0, icon: 'wallet' };
+        account = { id: Date.now().toString(), name: accountName, type: 'cash', balance: 0, color: '#10b981', icon: 'wallet' };
         accounts.push(account);
       }
       account.balance += amount;
@@ -4975,9 +5011,11 @@
         }
 
         accounts.push({
-          id: Date.now(),
+          id: Date.now().toString(),
           name,
+          type: 'cash',
           balance,
+          color: '#10b981',
           icon
         });
 
