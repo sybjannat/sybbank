@@ -3792,7 +3792,7 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_9OXYhKtHyvJTTdCcuCJQcQ_nbbE97cV';
 
     // Initialize Supabase client
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseDb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // App State - MUST be at the top before any function that uses these
     let accounts = [];
@@ -4234,10 +4234,10 @@
     async function loadData() {
       // First try to load from Supabase
       try {
-        const { data: accountsData, error: accountsError } = await supabase.from('accounts').select('*');
-        const { data: transactionsData, error: transactionsError } = await supabase.from('transactions').select('*');
-        const { data: goalsData, error: goalsError } = await supabase.from('goals').select('*');
-        const { data: lendingsData, error: lendingsError } = await supabase.from('lendings').select('*');
+        const { data: accountsData, error: accountsError } = await supabaseDb.from('accounts').select('*');
+        const { data: transactionsData, error: transactionsError } = await supabaseDb.from('transactions').select('*');
+        const { data: goalsData, error: goalsError } = await supabaseDb.from('goals').select('*');
+        const { data: lendingsData, error: lendingsError } = await supabaseDb.from('lendings').select('*');
 
         if (!accountsError && accountsData) {
           accounts = accountsData;
@@ -4325,22 +4325,22 @@
       // Then try to save to Supabase
       try {
         // Clear existing data and insert new data
-        await supabase.from('accounts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-        await supabase.from('transactions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-        await supabase.from('goals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-        await supabase.from('lendings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        await supabaseDb.from('accounts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        await supabaseDb.from('transactions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        await supabaseDb.from('goals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        await supabaseDb.from('lendings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
 
         if (accounts.length > 0) {
-          await supabase.from('accounts').insert(accounts);
+          await supabaseDb.from('accounts').insert(accounts);
         }
         if (transactions.length > 0) {
-          await supabase.from('transactions').insert(transactions);
+          await supabaseDb.from('transactions').insert(transactions);
         }
         if (goals.length > 0) {
-          await supabase.from('goals').insert(goals);
+          await supabaseDb.from('goals').insert(goals);
         }
         if (lendings.length > 0) {
-          await supabase.from('lendings').insert(lendings);
+          await supabaseDb.from('lendings').insert(lendings);
         }
 
         console.log('Data saved to Supabase');
@@ -5657,10 +5657,10 @@
       localStorage.removeItem('bloom_lendings');
 
       // Clear data from Supabase
-      supabase.from('accounts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      supabase.from('transactions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      supabase.from('goals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      supabase.from('lendings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      supabaseDb.from('accounts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      supabaseDb.from('transactions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      supabaseDb.from('goals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      supabaseDb.from('lendings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
 
       accounts = [];
       transactions = [];
@@ -5799,6 +5799,8 @@
     window.showScreen = showScreen;
     window.openModal = openModal;
     window.closeModal = closeModal;
+    window.checkLogin = checkLogin;
+    window.changePassword = changePassword;
     window.openNotifications = openNotifications;
     window.clearAllNotifications = clearAllNotifications;
     window.toggleSettingsMenu = function (event) {
