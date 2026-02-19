@@ -12,6 +12,8 @@
   <title>Bloom Finance · Personal Money Manager</title>
   <!-- Font Awesome 6 (free) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
       margin: 0;
@@ -3785,6 +3787,13 @@
   </div>
 
   <script>
+    // Supabase Configuration
+    const SUPABASE_URL = 'https://ysclckjgjeqklaxgmxhw.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_9OXYhKtHyvJTTdCcuCJQcQ_nbbE97cV';
+
+    // Initialize Supabase client
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     // App State - MUST be at the top before any function that uses these
     let accounts = [];
     let transactions = [];
@@ -4222,7 +4231,43 @@
     });
 
     // Load from localStorage
-    function loadData() {
+    async function loadData() {
+      // First try to load from Supabase
+      try {
+        const { data: accountsData, error: accountsError } = await supabase.from('accounts').select('*');
+        const { data: transactionsData, error: transactionsError } = await supabase.from('transactions').select('*');
+        const { data: goalsData, error: goalsError } = await supabase.from('goals').select('*');
+        const { data: lendingsData, error: lendingsError } = await supabase.from('lendings').select('*');
+
+        if (!accountsError && accountsData) {
+          accounts = accountsData;
+          console.log('Loaded accounts from Supabase:', accounts);
+        }
+        if (!transactionsError && transactionsData) {
+          transactions = transactionsData;
+        }
+        if (!goalsError && goalsData) {
+          goals = goalsData;
+        }
+        if (!lendingsError && lendingsData) {
+          lendings = lendingsData;
+        }
+
+        // If we got data from Supabase, save to localStorage as backup and return
+        if (!accountsError || !transactionsError || !goalsError || !lendingsError) {
+          console.log('Data loaded from Supabase');
+          // Save to localStorage as backup
+          localStorage.setItem('bloom_accounts', JSON.stringify(accounts));
+          localStorage.setItem('bloom_transactions', JSON.stringify(transactions));
+          localStorage.setItem('bloom_goals', JSON.stringify(goals));
+          localStorage.setItem('bloom_lendings', JSON.stringify(lendings));
+          return;
+        }
+      } catch (e) {
+        console.log('Supabase not available, falling back to localStorage');
+      }
+
+      // Fallback to localStorage
       try {
         const savedAccounts = localStorage.getItem('bloom_accounts');
         const savedTransactions = localStorage.getItem('bloom_transactions');
@@ -4264,21 +4309,49 @@
       }
     }
 
-    // Save data to localStorage
-    function saveData() {
+    // Save data to localStorage and Supabase
+    async function saveData() {
+      // First save to localStorage (always as backup)
       try {
         localStorage.setItem('bloom_accounts', JSON.stringify(accounts));
         localStorage.setItem('bloom_transactions', JSON.stringify(transactions));
         localStorage.setItem('bloom_goals', JSON.stringify(goals));
         localStorage.setItem('bloom_lendings', JSON.stringify(lendings));
-        console.log('Data saved:', accounts, transactions, goals, lendings);
-        showToast('Data saved!', 'success');
-        playNotificationSound();
-        refreshUI();
+        console.log('Data saved to localStorage:', accounts, transactions, goals, lendings);
       } catch (e) {
-        console.error('Error saving data:', e);
-        showToast('Error saving data', 'error');
+        console.error('Error saving to localStorage:', e);
       }
+
+      // Then try to save to Supabase
+      try {
+        // Clear existing data and insert new data
+        await supabase.from('accounts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        await supabase.from('transactions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        await supabase.from('goals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        await supabase.from('lendings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+
+        if (accounts.length > 0) {
+          await supabase.from('accounts').insert(accounts);
+        }
+        if (transactions.length > 0) {
+          await supabase.from('transactions').insert(transactions);
+        }
+        if (goals.length > 0) {
+          await supabase.from('goals').insert(goals);
+        }
+        if (lendings.length > 0) {
+          await supabase.from('lendings').insert(lendings);
+        }
+
+        console.log('Data saved to Supabase');
+        showToast('Data saved to cloud!', 'success');
+      } catch (e) {
+        console.log('Supabase save failed, data saved locally only');
+        showToast('Data saved!', 'success');
+      }
+
+      playNotificationSound();
+      refreshUI();
     }
 
     // Play notification sound
@@ -5577,17 +5650,22 @@
     }
 
     function confirmRestart() {
-      // Clear all data
+      // Clear all data from localStorage
       localStorage.removeItem('bloom_accounts');
       localStorage.removeItem('bloom_transactions');
       localStorage.removeItem('bloom_goals');
       localStorage.removeItem('bloom_lendings');
 
+      // Clear data from Supabase
+      supabase.from('accounts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      supabase.from('transactions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      supabase.from('goals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      supabase.from('lendings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+
       accounts = [];
       transactions = [];
       goals = [];
       lendings = [];
-      saveData();
       refreshUI();
       closeModal('restart-confirm');
       showToast('App restarted successfully!', 'success');
@@ -5707,11 +5785,15 @@
     }
 
     // Initialize
-    loadData();
-    refreshUI();
-    // Set default filter as active
-    const allChip = document.querySelector('.filter-chip');
-    if (allChip) allChip.classList.add('active');
+    async function initApp() {
+      await loadData();
+      refreshUI();
+      // Set default filter as active
+      const allChip = document.querySelector('.filter-chip');
+      if (allChip) allChip.classList.add('active');
+    }
+
+    initApp();
 
     // Make functions global
     window.showScreen = showScreen;
