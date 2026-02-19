@@ -4422,78 +4422,7 @@
 
     // Load from localStorage
     async function loadData() {
-      // First try to load from Supabase
-      try {
-        const { data: accountsData, error: accountsError } = await supabaseDb.from('accounts').select('*');
-        const { data: transactionsData, error: transactionsError } = await supabaseDb.from('transactions').select('*');
-        const { data: goalsData, error: goalsError } = await supabaseDb.from('goals').select('*');
-        const { data: lendingsData, error: lendingsError } = await supabaseDb.from('lendings').select('*');
-
-        if (!accountsError && accountsData) {
-          // Map Supabase field names to app field names
-          accounts = accountsData.map(a => ({
-            id: a.id,
-            name: a.account_name || a.name || '',
-            balance: a.balance || 0,
-            color: a.color || '#10b981',
-            icon: a.icon || 'wallet'
-          }));
-          console.log('Loaded accounts from Supabase:', accounts);
-        }
-        if (!transactionsError && transactionsData) {
-          transactions = transactionsData;
-        }
-        if (!goalsError && goalsData) {
-          // Map Supabase field names to app field names
-          goals = goalsData.map(g => ({
-            id: g.id,
-            name: g.name || '',
-            target: g.target_amount || g.target || 0,
-            current: g.current_amount || g.current || 0,
-            dueDate: g.deadline || g.dueDate || '',
-            color: g.color || '#8b5cf6',
-            icon: g.icon || 'bullseye'
-          }));
-        }
-        if (!lendingsError && lendingsData) {
-          // Map Supabase field names to app field names
-          // Also handle legacy data that might not have lending_type
-          lendings = lendingsData.map(l => {
-            // Determine type: check lending_type, then type, then infer from status
-            let lendingType = l.lending_type || l.type;
-            if (!lendingType) {
-              // If no type field, check status or other indicators
-              // 'active' or no status usually means 'lent' (lent out)
-              lendingType = 'lent';
-            }
-            return {
-              id: l.id,
-              person: l.person_name || l.person || '',
-              amount: l.amount || 0,
-              date: l.lent_date || l.date || '',
-              dueDate: l.due_date || l.dueDate || '',
-              type: lendingType,
-              paid: l.paid_amount || l.paid || 0,
-              note: l.note || ''
-            };
-          });
-        }
-
-        // If we got data from Supabase, save to localStorage as backup and return
-        if (!accountsError || !transactionsError || !goalsError || !lendingsError) {
-          console.log('Data loaded from Supabase');
-          // Save to localStorage as backup
-          localStorage.setItem('bloom_accounts', JSON.stringify(accounts));
-          localStorage.setItem('bloom_transactions', JSON.stringify(transactions));
-          localStorage.setItem('bloom_goals', JSON.stringify(goals));
-          localStorage.setItem('bloom_lendings', JSON.stringify(lendings));
-          return;
-        }
-      } catch (e) {
-        console.log('Supabase not available, falling back to localStorage');
-      }
-
-      // Fallback to localStorage
+      // First load from localStorage (source of truth)
       try {
         const savedAccounts = localStorage.getItem('bloom_accounts');
         const savedTransactions = localStorage.getItem('bloom_transactions');
@@ -4502,7 +4431,7 @@
 
         if (savedAccounts) {
           accounts = JSON.parse(savedAccounts);
-          console.log('Loaded accounts:', accounts);
+          console.log('Loaded accounts from localStorage:', accounts);
         } else {
           accounts = [];
         }
@@ -4515,23 +4444,82 @@
 
         if (savedGoals) {
           goals = JSON.parse(savedGoals);
+          console.log('Loaded goals from localStorage:', goals);
         } else {
           goals = [];
         }
 
         if (savedLendings) {
           lendings = JSON.parse(savedLendings);
+          console.log('Loaded lendings from localStorage:', lendings);
         } else {
           lendings = [];
         }
 
         console.log('Data loaded from localStorage');
       } catch (e) {
-        console.error('Error loading data:', e);
+        console.error('Error loading from localStorage:', e);
         accounts = [];
         transactions = [];
         goals = [];
         lendings = [];
+      }
+
+      // Then try to sync with Supabase (backup/secondary)
+      try {
+        const { data: accountsData, error: accountsError } = await supabaseDb.from('accounts').select('*');
+        const { data: transactionsData, error: transactionsError } = await supabaseDb.from('transactions').select('*');
+        const { data: goalsData, error: goalsError } = await supabaseDb.from('goals').select('*');
+        const { data: lendingsData, error: lendingsError } = await supabaseDb.from('lendings').select('*');
+
+        // Only update from Supabase if localStorage was empty
+        if (!accountsError && accountsData && accountsData.length > 0 && accounts.length === 0) {
+          accounts = accountsData.map(a => ({
+            id: a.id,
+            name: a.account_name || a.name || '',
+            balance: a.balance || 0,
+            color: a.color || '#10b981',
+            icon: a.icon || 'wallet'
+          }));
+          localStorage.setItem('bloom_accounts', JSON.stringify(accounts));
+        }
+
+        if (!transactionsError && transactionsData && transactionsData.length > 0 && transactions.length === 0) {
+          transactions = transactionsData;
+          localStorage.setItem('bloom_transactions', JSON.stringify(transactions));
+        }
+
+        if (!goalsError && goalsData && goalsData.length > 0 && goals.length === 0) {
+          goals = goalsData.map(g => ({
+            id: g.id,
+            name: g.name || '',
+            target: g.target_amount || g.target || 0,
+            current: g.current_amount || g.current || 0,
+            dueDate: g.deadline || g.dueDate || '',
+            color: g.color || '#8b5cf6',
+            icon: g.icon || 'bullseye'
+          }));
+          localStorage.setItem('bloom_goals', JSON.stringify(goals));
+        }
+
+        if (!lendingsError && lendingsData && lendingsData.length > 0 && lendings.length === 0) {
+          lendings = lendingsData.map(l => ({
+            id: l.id,
+            person: l.person_name || l.person || '',
+            amount: l.amount || 0,
+            date: l.lent_date || l.date || '',
+            dueDate: l.due_date || l.dueDate || '',
+            type: l.type || 'lent',
+            paid: l.paid_amount || l.paid || 0,
+            note: l.note || '',
+            status: l.status || 'active'
+          }));
+          localStorage.setItem('bloom_lendings', JSON.stringify(lendings));
+        }
+
+        console.log('Synced with Supabase (if needed)');
+      } catch (e) {
+        console.log('Supabase sync failed, using localStorage only');
       }
     }
 
@@ -4583,9 +4571,9 @@
           person_name: l.person_name || l.person || '',
           amount: l.amount || 0,
           lent_date: l.lent_date || l.date || '',
-          lending_type: l.lending_type || l.type || 'lent',
+          type: l.type || 'lent',
           paid_amount: l.paid_amount || l.paid || 0,
-          due_date: l.due_date || l.dueDate || '',
+          due_date: l.dueDate || '',
           note: l.note || '',
           status: l.status || 'active'
         }));
@@ -5027,6 +5015,7 @@
         paid: 0,
         date: new Date().toISOString().split('T')[0]
       });
+      console.log('Added lend to array, current lendings:', lendings);
 
       // Add as neutral transaction (not expense)
       transactions.push({
@@ -5040,11 +5029,13 @@
       });
 
       saveData();
+      console.log('saveData called');
       // Close modal
       var lendModal = document.getElementById('lend-modal');
       if (lendModal) lendModal.classList.remove('active');
 
       refreshUI();
+      showToast('Money lent successfully!', 'success');
     }
 
     // Add Borrow
@@ -5066,6 +5057,17 @@
         paid: 0,
         date: new Date().toISOString().split('T')[0]
       });
+      console.log('Added borrow to array, current lendings:', lendings);
+
+      // Add to Debt account (create if not exists)
+      let cashAccount = accounts.find(a => a.name === 'Debt');
+      if (!cashAccount) {
+        cashAccount = { id: Date.now().toString(), name: 'Debt', type: 'cash', balance: 0, color: '#10b981', icon: 'wallet' };
+        accounts.push(cashAccount);
+        console.log('Created new Debt account');
+      }
+      cashAccount.balance += amount;
+      console.log('Debt account balance after borrow:', cashAccount.balance);
 
       // Add as neutral transaction (not income)
       transactions.push({
@@ -5073,7 +5075,7 @@
         type: 'borrowed',
         amount,
         category: 'Borrowed',
-        account: 'Cash Wallet',
+        account: 'Debt',
         note: 'Borrowed from ' + person,
         date: new Date().toISOString().split('T')[0]
       });
@@ -5196,13 +5198,13 @@
         type: 'repaid',
         amount,
         category: 'Repayment',
-        account: 'Cash Wallet',
+        account: 'Debt',
         note: 'Repaid to ' + person + (note ? ' - ' + note : ''),
         date: new Date().toISOString().split('T')[0]
       });
 
       // Deduct from account balance
-      const cashAccount = accounts.find(a => a.name === 'Cash Wallet');
+      const cashAccount = accounts.find(a => a.name === 'Debt');
       if (cashAccount) {
         cashAccount.balance -= amount;
       }
@@ -5504,6 +5506,11 @@
       const totalBalance = (accounts || []).reduce((sum, a) => sum + (a.balance || 0), 0);
       const totalLent = (lendings || []).filter(l => l && l.type === 'lent').reduce((sum, l) => sum + ((l.amount || 0) - (l.paid || 0)), 0);
       const totalBorrowed = (lendings || []).filter(l => l && l.type === 'borrowed').reduce((sum, l) => sum + ((l.amount || 0) - (l.paid || 0)), 0);
+
+      console.log('Net Worth Calc - totalBalance:', totalBalance, 'totalLent:', totalLent, 'totalBorrowed:', totalBorrowed);
+      console.log('Accounts:', accounts);
+      console.log('Lendings:', lendings);
+
       return totalBalance + totalLent - totalBorrowed;
     }
 
@@ -5880,10 +5887,21 @@
         }
       }
 
-      // Upcoming list
+      // Upcoming list - show all active lendings/borrowings (with or without due date)
       const upcoming = document.getElementById('upcoming-list');
       const today = new Date();
-      const upcomingLends = (lendings || []).filter(l => l && l.dueDate && new Date(l.dueDate) > today && (l.amount || 0) > (l.paid || 0)).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+      today.setHours(0, 0, 0, 0); // Start of today
+
+      // Show all active lendings (not fully paid), sorted by due date if available
+      const upcomingLends = (lendings || []).filter(l => l && (l.amount || 0) > (l.paid || 0)).sort((a, b) => {
+        // Sort by due date if available, otherwise by date created
+        if (a.dueDate && b.dueDate) {
+          return new Date(a.dueDate) - new Date(b.dueDate);
+        }
+        if (a.dueDate) return -1; // Items with due dates first
+        if (b.dueDate) return 1;
+        return new Date(b.date || 0) - new Date(a.date || 0); // Most recent first
+      });
       upcoming.innerHTML = upcomingLends.map(l => `
             <div class="upcoming-item">
                 <div class="info">
@@ -6052,8 +6070,9 @@
           }
         }
 
-        // Remove transaction
-        transactions = transactions.filter(t => t.id !== transactionToDelete);
+        // Remove transaction (convert IDs to string for comparison)
+        transactions = transactions.filter(t => String(t.id) !== String(transactionToDelete));
+        console.log('Transaction deleted, remaining transactions:', transactions.length);
         saveData();
         refreshUI();
         showToast('Transaction deleted successfully!', 'success');
