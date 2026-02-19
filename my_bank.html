@@ -45,6 +45,12 @@
       overflow-x: hidden;
       position: fixed;
       width: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Remove tap highlight from all clickable elements */
+    * {
+      -webkit-tap-highlight-color: transparent;
     }
 
     .app-container {
@@ -726,6 +732,60 @@
       cursor: pointer;
     }
 
+    /* User Menu Dropdown */
+    .user-menu-container {
+      position: relative;
+    }
+
+    .user-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      padding: 8px 0;
+      min-width: 150px;
+      z-index: 1001;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .user-dropdown-menu.show {
+      display: block;
+    }
+
+    .user-menu-item {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #374151;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .user-menu-item:hover {
+      background: rgba(168, 85, 247, 0.1);
+      color: #a855f7;
+    }
+
+    .user-menu-item i {
+      width: 20px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .notification-badge {
       position: absolute;
       top: -2px;
@@ -1291,6 +1351,20 @@
       box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
     }
 
+    /* Add button animation */
+    .add-btn-animate {
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+
+    .add-btn-animate:hover {
+      transform: scale(1.2);
+    }
+
+    .add-btn-animate:active {
+      transform: scale(0.95);
+    }
+
     .action-icon {
       width: 44px;
       height: 44px;
@@ -1366,24 +1440,59 @@
       color: #9b6b9b;
       font-size: 12px;
       font-weight: 500;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
       gap: 2px;
-      padding: 8px 10px;
+      padding: 8px 12px;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
     }
 
     .nav-item i {
       font-size: 22px;
       margin-bottom: 2px;
+      transition: all 0.3s ease;
     }
 
     .nav-item.active {
-      color: #a21caf;
-      transform: translateY(-3px);
+      color: #fff;
+      transform: translateY(-4px);
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f43f5e 100%);
+      box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4), 0 0 20px rgba(236, 72, 153, 0.3);
     }
 
     .nav-item.active i {
-      color: #c026d3;
+      color: #fff;
+      transform: scale(1.15);
+      text-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: navShine 2s infinite;
+    }
+
+    @keyframes navShine {
+      0% {
+        left: -100%;
+      }
+
+      50%,
+      100% {
+        left: 100%;
+      }
+    }
+
+    .nav-item:hover:not(.active) {
+      background: rgba(168, 85, 247, 0.1);
+      transform: translateY(-2px);
     }
 
     /* Screens */
@@ -1783,6 +1892,42 @@
       transform: translateY(-4px) scale(1.02);
       box-shadow: 0 12px 40px rgba(168, 85, 247, 0.25);
       border-color: rgba(168, 85, 247, 0.4);
+    }
+
+    .goal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(168, 85, 247, 0.1);
+    }
+
+    .goal-action-btn {
+      background: rgba(168, 85, 247, 0.1);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      color: #8b5cf6;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+
+    .goal-action-btn:hover {
+      background: #8b5cf6;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .goal-action-btn.delete {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .goal-action-btn.delete:hover {
+      background: #ef4444;
+      color: white;
     }
 
     @keyframes goalCardIn {
@@ -2820,10 +2965,14 @@
       background: rgba(255, 255, 255, 0.4);
       border-radius: 20px;
       margin-bottom: 20px;
+      scroll-snap-type: x mandatory;
     }
 
     .goal-mini-card {
       min-width: 140px;
+      max-width: 160px;
+      flex-shrink: 0;
+      scroll-snap-align: start;
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(245, 240, 255, 0.9) 100%);
       border-radius: 16px;
       padding: 14px;
@@ -3008,8 +3157,18 @@
               <i class="fas fa-bell"></i>
               <span class="notification-badge" id="notification-badge">0</span>
             </div>
-            <div class="notification-bell" onclick="openModal('password')" title="Settings">
-              <i class="fas fa-user-circle"></i>
+            <div class="user-menu-container">
+              <div class="notification-bell" onclick="toggleUserMenu()" title="Account">
+                <i class="fas fa-user-circle"></i>
+              </div>
+              <div id="user-menu" class="user-dropdown-menu">
+                <div class="user-menu-item" onclick="openModal('password')">
+                  <i class="fas fa-cog"></i> Settings
+                </div>
+                <div class="user-menu-item" onclick="logout()">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -3116,7 +3275,8 @@
         <div class="header">
           <span class="back-link" onclick="showScreen('home')"><i class="fas fa-arrow-left"></i></span>
           <span class="app-title">My Accounts</span>
-          <span onclick="openModal('account')" style="color:#a855f7;"><i class="fas fa-plus-circle fa-lg"></i></span>
+          <span onclick="openModal('account')" style="color:#a855f7; cursor:pointer;" class="add-btn-animate"><i
+              class="fas fa-plus-circle fa-lg"></i></span>
         </div>
 
         <!-- Account Summary Card -->
@@ -3343,25 +3503,30 @@
 
   <!-- Password Change Modal -->
   <div id="password-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3><i class="fas fa-lock" style="color:#7c3aed;"></i> Change Password</h3>
-        <span class="close-modal" onclick="closeModal('password')">&times;</span>
+    <div class="modal-content" style="overflow: hidden; padding: 0;">
+      <div class="modal-header"
+        style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; padding: 20px 24px; margin: 0;">
+        <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;"><i class="fas fa-lock"></i> Change
+          Password</h3>
+        <span class="close-modal" onclick="closeModal('password')" style="color: white;">&times;</span>
       </div>
-      <div class="form-group">
-        <label>Current Password</label>
-        <input type="password" id="current-password" placeholder="Enter current password">
+      <div style="padding: 24px;">
+        <div class="form-group">
+          <label>Current Password</label>
+          <input type="password" id="current-password" placeholder="Enter current password">
+        </div>
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" id="new-password" placeholder="Enter new password">
+        </div>
+        <div class="form-group">
+          <label>Confirm New Password</label>
+          <input type="password" id="confirm-password" placeholder="Confirm new password">
+        </div>
+        <button type="button" class="btn-save" onclick="changePassword()" style="width: 100%; margin-top: 10px;">Change
+          Password</button>
+        <button class="btn-cancel" onclick="closeModal('password')" style="width: 100%;">Cancel</button>
       </div>
-      <div class="form-group">
-        <label>New Password</label>
-        <input type="password" id="new-password" placeholder="Enter new password">
-      </div>
-      <div class="form-group">
-        <label>Confirm New Password</label>
-        <input type="password" id="confirm-password" placeholder="Confirm new password">
-      </div>
-      <button type="button" class="btn-save" onclick="changePassword()">Change Password</button>
-      <button class="btn-cancel" onclick="closeModal('password')">Cancel</button>
     </div>
   </div>
 
@@ -3625,15 +3790,6 @@
         <label>Initial Balance (৳)</label>
         <input type="number" id="account-balance" placeholder="0">
       </div>
-      <div class="form-group">
-        <label>Icon</label>
-        <select id="account-icon">
-          <option value="wallet">👛 Wallet</option>
-          <option value="piggy">🐷 Piggy</option>
-          <option value="bank">🏦 Bank</option>
-          <option value="cash">💵 Cash</option>
-        </select>
-      </div>
       <button type="button" class="btn-save" onclick="addAccount()">Create Account</button>
       <button class="btn-cancel" onclick="closeModal('account')">Cancel</button>
     </div>
@@ -3661,6 +3817,39 @@
       <button type="button" class="btn-save"
         onclick="document.getElementById('goal-modal').classList.remove('active'); addGoal()">Create Goal</button>
       <button class="btn-cancel" onclick="closeModal('goal')">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Edit Goal Modal -->
+  <div id="edit-goal-modal" class="modal">
+    <div class="modal-content" style="overflow: hidden; padding: 0;">
+      <div class="modal-header"
+        style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: white; padding: 20px 24px; margin: 0;">
+        <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;"><i class="fas fa-edit"></i> Edit Goal</h3>
+        <span class="close-modal" onclick="closeModal('edit-goal')" style="color: white;">&times;</span>
+      </div>
+      <div style="padding: 24px;">
+        <input type="hidden" id="edit-goal-id">
+        <div class="form-group">
+          <label>Goal Name</label>
+          <input type="text" id="edit-goal-name" placeholder="Goal Name">
+        </div>
+        <div class="form-group">
+          <label>Target Amount (৳)</label>
+          <input type="number" id="edit-goal-target" placeholder="Target Amount">
+        </div>
+        <div class="form-group">
+          <label>Current Amount (৳)</label>
+          <input type="number" id="edit-goal-current" placeholder="Current Amount">
+        </div>
+        <div class="form-group">
+          <label>Target Date</label>
+          <input type="date" id="edit-goal-date">
+        </div>
+        <button type="button" class="btn-save" onclick="saveEditedGoal()" style="width: 100%; margin-top: 10px;">Save
+          Changes</button>
+        <button class="btn-cancel" onclick="closeModal('edit-goal')" style="width: 100%;">Cancel</button>
+      </div>
     </div>
   </div>
 
@@ -3822,8 +4011,8 @@
       threeDaysLater.setDate(threeDaysLater.getDate() + 3);
 
       // Check lendings for upcoming due dates
-      lendings.forEach(lending => {
-        if (lending.dueDate && lending.amount > (lending.paid || 0)) {
+      (lendings || []).forEach(lending => {
+        if (lending && lending.dueDate && (lending.amount || 0) > (lending.paid || 0)) {
           const dueDate = new Date(lending.dueDate);
           dueDate.setHours(0, 0, 0, 0);
 
@@ -4129,6 +4318,7 @@
         document.querySelector('.app-container').style.display = 'flex';
         updateNotificationBadge();
         startNotificationChecker();
+        showToast('Welcome back! Logged in successfully!', 'success');
       } else {
         document.getElementById('login-error').textContent = 'Incorrect password. Try again!';
       }
@@ -4141,23 +4331,23 @@
       const savedPassword = localStorage.getItem('bloom_password') || DEFAULT_PASSWORD;
 
       if (currentPassword !== savedPassword) {
-        alert('Current password is incorrect!');
+        showToast('Current password is incorrect!', 'error');
         return;
       }
 
       if (newPassword.length < 4) {
-        alert('New password must be at least 4 characters!');
+        showToast('New password must be at least 4 characters!', 'error');
         return;
       }
 
       if (newPassword !== confirmPassword) {
-        alert('New passwords do not match!');
+        showToast('New passwords do not match!', 'error');
         return;
       }
 
       localStorage.setItem('bloom_password', newPassword);
       closeModal('password');
-      alert('Password changed successfully!');
+      showToast('Password changed successfully!', 'success');
 
       // Clear the form
       document.getElementById('current-password').value = '';
@@ -4240,17 +4430,53 @@
         const { data: lendingsData, error: lendingsError } = await supabaseDb.from('lendings').select('*');
 
         if (!accountsError && accountsData) {
-          accounts = accountsData;
+          // Map Supabase field names to app field names
+          accounts = accountsData.map(a => ({
+            id: a.id,
+            name: a.account_name || a.name || '',
+            balance: a.balance || 0,
+            color: a.color || '#10b981',
+            icon: a.icon || 'wallet'
+          }));
           console.log('Loaded accounts from Supabase:', accounts);
         }
         if (!transactionsError && transactionsData) {
           transactions = transactionsData;
         }
         if (!goalsError && goalsData) {
-          goals = goalsData;
+          // Map Supabase field names to app field names
+          goals = goalsData.map(g => ({
+            id: g.id,
+            name: g.name || '',
+            target: g.target_amount || g.target || 0,
+            current: g.current_amount || g.current || 0,
+            dueDate: g.deadline || g.dueDate || '',
+            color: g.color || '#8b5cf6',
+            icon: g.icon || 'bullseye'
+          }));
         }
         if (!lendingsError && lendingsData) {
-          lendings = lendingsData;
+          // Map Supabase field names to app field names
+          // Also handle legacy data that might not have lending_type
+          lendings = lendingsData.map(l => {
+            // Determine type: check lending_type, then type, then infer from status
+            let lendingType = l.lending_type || l.type;
+            if (!lendingType) {
+              // If no type field, check status or other indicators
+              // 'active' or no status usually means 'lent' (lent out)
+              lendingType = 'lent';
+            }
+            return {
+              id: l.id,
+              person: l.person_name || l.person || '',
+              amount: l.amount || 0,
+              date: l.lent_date || l.date || '',
+              dueDate: l.due_date || l.dueDate || '',
+              type: lendingType,
+              paid: l.paid_amount || l.paid || 0,
+              note: l.note || ''
+            };
+          });
         }
 
         // If we got data from Supabase, save to localStorage as backup and return
@@ -4347,9 +4573,9 @@
         const goalsToSave = goals.map(g => ({
           id: g.id?.toString() || Date.now().toString(),
           name: g.name || '',
-          target_amount: g.target_amount || 0,
-          current_amount: g.current_amount || 0,
-          deadline: g.deadline || ''
+          target_amount: g.target_amount || g.target || 0,
+          current_amount: g.current_amount || g.current || 0,
+          deadline: g.deadline || g.dueDate || ''
         }));
 
         const lendingsToSave = lendings.map(l => ({
@@ -4357,6 +4583,10 @@
           person_name: l.person_name || l.person || '',
           amount: l.amount || 0,
           lent_date: l.lent_date || l.date || '',
+          lending_type: l.lending_type || l.type || 'lent',
+          paid_amount: l.paid_amount || l.paid || 0,
+          due_date: l.due_date || l.dueDate || '',
+          note: l.note || '',
           status: l.status || 'active'
         }));
 
@@ -4418,15 +4648,49 @@
       }
     }
 
+    // User menu toggle
+    function toggleUserMenu() {
+      const menu = document.getElementById('user-menu');
+      if (menu) {
+        menu.classList.toggle('show');
+      }
+    }
+
+    // Logout function
+    function logout() {
+      // Hide menu
+      const menu = document.getElementById('user-menu');
+      if (menu) {
+        menu.classList.remove('show');
+      }
+
+      // Clear login state
+      localStorage.setItem('bloom_logged_in', 'false');
+
+      // Show login screen
+      document.getElementById('login-screen').style.display = 'flex';
+      showToast('Logged out successfully!', 'success');
+    }
+
     // Screen management
     function showScreen(screenId) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId + '-screen').classList.add('active');
 
+      // Map screen IDs to nav label matches
+      const screenToLabel = {
+        'home': 'home',
+        'accounts': 'accounts',
+        'transactions': 'trans',
+        'goals': 'goals',
+        'insights': 'insights',
+        'more': 'more'
+      };
+
       document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
-        if (item.querySelector('span').innerText.toLowerCase().includes(screenId) ||
-          (screenId === 'home' && item.querySelector('span').innerText === 'Home')) {
+        const labelMatch = screenToLabel[screenId];
+        if (labelMatch && item.querySelector('span').innerText.toLowerCase().includes(labelMatch)) {
           item.classList.add('active');
         }
       });
@@ -4485,11 +4749,11 @@
           if (receiveSelect) {
             // Group by person and calculate total remaining
             const personTotals = {};
-            lendings.filter(l => l.type === 'lent' && (l.paid || 0) < l.amount).forEach(l => {
+            (lendings || []).filter(l => l && l.type === 'lent' && (l.paid || 0) < (l.amount || 0)).forEach(l => {
               if (!personTotals[l.person]) {
                 personTotals[l.person] = 0;
               }
-              personTotals[l.person] += (l.amount - (l.paid || 0));
+              personTotals[l.person] += ((l.amount || 0) - (l.paid || 0));
             });
 
             // Clear and add default option first
@@ -4506,7 +4770,7 @@
             }
           }
           if (receiveAccountSelect) {
-            receiveAccountSelect.innerHTML = accounts.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
+            receiveAccountSelect.innerHTML = (accounts || []).map(a => `<option value="${a.name}">${a.name}</option>`).join('');
           }
           // Reset amount field
           const receiveAmount = document.getElementById('receive-amount');
@@ -4518,11 +4782,11 @@
           if (repaySelect) {
             // Group by person and calculate total remaining
             const personTotals = {};
-            lendings.filter(l => l.type === 'borrowed' && (l.paid || 0) < l.amount).forEach(l => {
+            (lendings || []).filter(l => l && l.type === 'borrowed' && (l.paid || 0) < (l.amount || 0)).forEach(l => {
               if (!personTotals[l.person]) {
                 personTotals[l.person] = 0;
               }
-              personTotals[l.person] += (l.amount - (l.paid || 0));
+              personTotals[l.person] += ((l.amount || 0) - (l.paid || 0));
             });
 
             // Clear and add default option first
@@ -4576,11 +4840,13 @@
       } catch (e) {
         console.error('Error populating modal:', e);
       }
-      // Always open the modal, even if there was an error populating it
-      const modal = document.getElementById(type + '-modal');
-      if (modal) {
-        modal.classList.add('active');
-      }
+      // Add small delay to allow button animation to complete on touch devices
+      setTimeout(() => {
+        const modal = document.getElementById(type + '-modal');
+        if (modal) {
+          modal.classList.add('active');
+        }
+      }, 100);
     }
 
     // Show Toast Notification
@@ -4623,7 +4889,7 @@
     function updateLendBorrowList() {
       const type = document.getElementById('view-lendborrow-type').value;
       const container = document.getElementById('lendborrow-list-container');
-      const filtered = lendings.filter(l => l.type === type);
+      const filtered = (lendings || []).filter(l => l && l.type === type);
 
       if (filtered.length === 0) {
         container.innerHTML = '<p style="text-align:center;color:#6b7280;padding:20px;">No records found</p>';
@@ -4639,12 +4905,12 @@
       html += '</tr>';
 
       filtered.forEach(l => {
-        const due = l.amount - (l.paid || 0);
+        const due = (l.amount || 0) - (l.paid || 0);
         const isOverdue = l.dueDate && new Date(l.dueDate) < new Date();
         html += '<tr>';
-        html += '<td style="padding:10px;text-align:center;border-bottom:1px solid #e5e7eb;">' + l.person + '</td>';
-        html += '<td style="padding:10px;text-align:center;border-bottom:1px solid #e5e7eb;">৳' + l.amount.toLocaleString() + '</td>';
-        html += '<td style="padding:10px;text-align:center;border-bottom:1px solid #e5e7eb;color:#10b981;">৳' + (l.paid || 0).toLocaleString() + '</td>';
+        html += '<td style="padding:10px;text-align:center;border-bottom:1px solid #e5e7eb;">' + (l.person || 'Unknown') + '</td>';
+        html += '<td style="padding:10px;text-align:center;border-bottom:1px solid #e5e7eb;">৳' + ((l.amount || 0).toLocaleString()) + '</td>';
+        html += '<td style="padding:10px;text-align:center;border-bottom:1px solid #e5e7eb;color:#10b981;">৳' + ((l.paid || 0).toLocaleString()) + '</td>';
         html += '<td style="padding:10px;text-align:center;border-bottom:1px solid #e5e7eb;' + (isOverdue ? 'color:#ef4444;font-weight:600;' : '') + '">৳' + due.toLocaleString() + '</td>';
         html += '</tr>';
       });
@@ -4831,13 +5097,13 @@
       if (!amount || amount <= 0) return showToast('Please enter a valid amount', 'warning');
 
       // Find all lending records for this person
-      const personLendings = lendings.filter(l => l.type === 'lent' && l.person === person);
+      const personLendings = (lendings || []).filter(l => l && l.type === 'lent' && l.person === person);
       if (!personLendings || personLendings.length === 0) return showToast('No lending record found for this person', 'error');
 
       // Calculate total remaining amount for this person
       let totalRemaining = 0;
       personLendings.forEach(l => {
-        totalRemaining += (l.amount - (l.paid || 0));
+        totalRemaining += ((l.amount || 0) - (l.paid || 0));
       });
 
       if (amount > totalRemaining) return showToast(`Maximum amount is ৳${totalRemaining.toLocaleString()}`, 'warning');
@@ -4845,11 +5111,11 @@
       // Update all lending records for this person (pay off oldest first)
       let remainingAmount = amount;
       // Sort by date to pay oldest first
-      personLendings.sort((a, b) => new Date(a.date) - new Date(b.date));
+      personLendings.sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));
 
       for (let lending of personLendings) {
         if (remainingAmount <= 0) break;
-        const lendingRemaining = lending.amount - (lending.paid || 0);
+        const lendingRemaining = (lending.amount || 0) - (lending.paid || 0);
         const payment = Math.min(remainingAmount, lendingRemaining);
         lending.paid = (lending.paid || 0) + payment;
         remainingAmount -= payment;
@@ -4875,11 +5141,11 @@
       account.balance += amount;
 
       // If all lendings for this person are fully paid, show message
-      const stillOwe = lendings.filter(l => l.type === 'lent' && l.person === person && (l.paid || 0) < l.amount);
+      const stillOwe = (lendings || []).filter(l => l && l.type === 'lent' && l.person === person && (l.paid || 0) < (l.amount || 0));
       if (stillOwe.length === 0) {
         showToast('All lendings from this person fully received!', 'success');
       } else {
-        showToast(`Received ৳${amount.toLocaleString()}. Remaining: ৳${stillOwe.reduce((sum, l) => sum + (l.amount - l.paid), 0).toLocaleString()}`, 'success');
+        showToast(`Received ৳${amount.toLocaleString()}. Remaining: ৳${stillOwe.reduce((sum, l) => sum + ((l.amount || 0) - (l.paid || 0)), 0).toLocaleString()}`, 'success');
       }
 
       // Close modal
@@ -4900,13 +5166,13 @@
       if (!amount || amount <= 0) return showToast('Please enter a valid amount', 'warning');
 
       // Find all borrowing records for this person
-      const personBorrowings = lendings.filter(l => l.type === 'borrowed' && l.person === person);
+      const personBorrowings = (lendings || []).filter(l => l && l.type === 'borrowed' && l.person === person);
       if (!personBorrowings || personBorrowings.length === 0) return showToast('No borrowing record found for this person', 'error');
 
       // Calculate total remaining amount for this person
       let totalRemaining = 0;
       personBorrowings.forEach(l => {
-        totalRemaining += (l.amount - (l.paid || 0));
+        totalRemaining += ((l.amount || 0) - (l.paid || 0));
       });
 
       if (amount > totalRemaining) return showToast(`Maximum amount is ৳${totalRemaining.toLocaleString()}`, 'warning');
@@ -4914,7 +5180,7 @@
       // Update all borrowing records for this person (pay off oldest first)
       let remainingAmount = amount;
       // Sort by date to pay oldest first
-      personBorrowings.sort((a, b) => new Date(a.date) - new Date(b.date));
+      personBorrowings.sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));
 
       for (let borrowing of personBorrowings) {
         if (remainingAmount <= 0) break;
@@ -4942,11 +5208,11 @@
       }
 
       // If all borrowings for this person are fully repaid, show message
-      const stillOwe = lendings.filter(l => l.type === 'borrowed' && l.person === person && (l.paid || 0) < l.amount);
+      const stillOwe = (lendings || []).filter(l => l && l.type === 'borrowed' && l.person === person && (l.paid || 0) < (l.amount || 0));
       if (stillOwe.length === 0) {
         showToast('All borrowings from this person fully repaid!', 'success');
       } else {
-        showToast(`Repaid ৳${amount.toLocaleString()}. Remaining: ৳${stillOwe.reduce((sum, l) => sum + (l.amount - l.paid), 0).toLocaleString()}`, 'success');
+        showToast(`Repaid ৳${amount.toLocaleString()}. Remaining: ৳${stillOwe.reduce((sum, l) => sum + ((l.amount || 0) - (l.paid || 0)), 0).toLocaleString()}`, 'success');
       }
 
       // Close modal
@@ -5034,9 +5300,11 @@
     // Confirm Delete Account
     let accountToDelete = null;
     function confirmDeleteAccount(id) {
-      const account = accounts.find(a => a.id === id);
+      // Convert id to string for comparison (Supabase returns strings)
+      const idStr = id.toString();
+      const account = accounts.find(a => String(a.id) === idStr);
       if (account) {
-        accountToDelete = id;
+        accountToDelete = idStr;
         document.getElementById('delete-message').textContent = `Are you sure you want to delete "${account.name}"? This will also remove all associated transactions.`;
         openModal('delete');
       }
@@ -5048,10 +5316,23 @@
       var deleteModal = document.getElementById('delete-modal');
       if (deleteModal) deleteModal.classList.remove('active');
 
+      // Check if deleting a goal
+      if (goalToDelete) {
+        goals = goals.filter(g => String(g.id) !== String(goalToDelete));
+        saveData();
+        refreshUI();
+        showToast('Goal deleted successfully!', 'success');
+        goalToDelete = null;
+        return;
+      }
+
+      // Delete account
       if (accountToDelete) {
-        accounts = accounts.filter(a => a.id !== accountToDelete);
+        const idStr = String(accountToDelete);
+        const accountName = accounts.find(a => String(a.id) === idStr)?.name;
+        accounts = accounts.filter(a => String(a.id) !== idStr);
         // Also remove transactions for this account
-        transactions = transactions.filter(t => t.account !== accounts.find(a => a.id === accountToDelete)?.name);
+        transactions = transactions.filter(t => t.account !== accountName);
         saveData();
         refreshUI();
         accountToDelete = null;
@@ -5060,7 +5341,9 @@
 
     // Edit Account - Open Modal
     function editAccount(id) {
-      const account = accounts.find(a => a.id === id);
+      // Convert id to string for comparison (Supabase returns strings)
+      const idStr = id.toString();
+      const account = accounts.find(a => String(a.id) === idStr);
       if (account) {
         document.getElementById('edit-account-id').value = account.id;
         document.getElementById('edit-account-name').value = account.name;
@@ -5075,11 +5358,11 @@
       var editModal = document.getElementById('edit-account-modal');
       if (editModal) editModal.classList.remove('active');
 
-      const id = parseInt(document.getElementById('edit-account-id').value);
+      const id = document.getElementById('edit-account-id').value;
       const newName = document.getElementById('edit-account-name').value;
       const newBalance = parseFloat(document.getElementById('edit-account-balance').value) || 0;
 
-      const account = accounts.find(a => a.id === id);
+      const account = accounts.find(a => String(a.id) === String(id));
       if (account && newName) {
         const oldName = account.name;
         account.name = newName;
@@ -5104,7 +5387,7 @@
       if (!name || !target) return showToast('Name and target required', 'warning');
 
       goals.push({
-        id: Date.now(),
+        id: Date.now().toString(),
         name,
         current: 0,
         target,
@@ -5119,11 +5402,108 @@
       refreshUI();
     }
 
+    // Open Edit Goal Modal
+    function openEditGoalModal(id) {
+      const goal = goals.find(g => String(g.id) === String(id));
+      if (goal) {
+        document.getElementById('edit-goal-id').value = goal.id;
+        document.getElementById('edit-goal-name').value = goal.name;
+        document.getElementById('edit-goal-target').value = goal.target;
+        document.getElementById('edit-goal-current').value = goal.current;
+        document.getElementById('edit-goal-date').value = goal.dueDate || '';
+        openModal('edit-goal');
+      }
+    }
+
+    // Save Edited Goal
+    function saveEditedGoal() {
+      const id = document.getElementById('edit-goal-id').value;
+      const name = document.getElementById('edit-goal-name').value;
+      const target = parseFloat(document.getElementById('edit-goal-target').value);
+      const current = parseFloat(document.getElementById('edit-goal-current').value) || 0;
+      const dueDate = document.getElementById('edit-goal-date').value;
+
+      if (!name || !target) return showToast('Name and target required', 'warning');
+
+      const goalIndex = goals.findIndex(g => String(g.id) === String(id));
+      if (goalIndex !== -1) {
+        goals[goalIndex].name = name;
+        goals[goalIndex].target = target;
+        goals[goalIndex].current = current;
+        goals[goalIndex].dueDate = dueDate;
+        saveData();
+        closeModal('edit-goal');
+        refreshUI();
+        showToast('Goal updated successfully!', 'success');
+      }
+    }
+
+    // Confirm Delete Goal
+    let goalToDelete = null;
+    function confirmDeleteGoal(id) {
+      const goal = goals.find(g => String(g.id) === String(id));
+      if (goal) {
+        goalToDelete = id;
+        document.getElementById('delete-message').textContent = `Are you sure you want to delete "${goal.name}"? This action cannot be undone.`;
+        openModal('delete');
+      }
+    }
+
+    // Delete Goal (called from existing delete modal)
+    function deleteGoal() {
+      if (goalToDelete) {
+        const goalIdToDelete = String(goalToDelete);
+        console.log('Deleting goal:', goalIdToDelete);
+        console.log('Goals before delete:', goals);
+
+        // Filter out the goal locally
+        goals = goals.filter(g => String(g.id) !== goalIdToDelete);
+        console.log('Goals after delete:', goals);
+
+        // Save to localStorage immediately (synchronous)
+        localStorage.setItem('bloom_goals', JSON.stringify(goals));
+        console.log('Saved to localStorage');
+
+        // Try to delete from Supabase
+        if (supabaseDb) {
+          console.log('Attempting to delete from Supabase...');
+          // First delete the specific goal
+          supabaseDb.from('goals').delete().eq('id', goalIdToDelete)
+            .then(({ error }) => {
+              if (error) {
+                console.error('Supabase delete error:', error);
+              } else {
+                console.log('Deleted from Supabase successfully');
+                // Then upsert remaining goals to ensure consistency
+                const goalsToSave = goals.map(g => ({
+                  id: String(g.id),
+                  name: g.name || '',
+                  target_amount: g.target_amount || g.target || 0,
+                  current_amount: g.current_amount || g.current || 0,
+                  deadline: g.deadline || g.dueDate || ''
+                }));
+                if (goalsToSave.length > 0) {
+                  supabaseDb.from('goals').upsert(goalsToSave, { onConflict: 'id' })
+                    .then(({ error }) => {
+                      if (error) console.error('Supabase upsert error:', error);
+                      else console.log('Goals synced to Supabase');
+                    });
+                }
+              }
+            });
+        }
+
+        refreshUI();
+        goalToDelete = null;
+        showToast('Goal deleted successfully!', 'success');
+      }
+    }
+
     // Calculate net worth
     function calculateNetWorth() {
-      const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
-      const totalLent = lendings.filter(l => l.type === 'lent').reduce((sum, l) => sum + (l.amount - l.paid), 0);
-      const totalBorrowed = lendings.filter(l => l.type === 'borrowed').reduce((sum, l) => sum + (l.amount - l.paid), 0);
+      const totalBalance = (accounts || []).reduce((sum, a) => sum + (a.balance || 0), 0);
+      const totalLent = (lendings || []).filter(l => l && l.type === 'lent').reduce((sum, l) => sum + ((l.amount || 0) - (l.paid || 0)), 0);
+      const totalBorrowed = (lendings || []).filter(l => l && l.type === 'borrowed').reduce((sum, l) => sum + ((l.amount || 0) - (l.paid || 0)), 0);
       return totalBalance + totalLent - totalBorrowed;
     }
 
@@ -5135,22 +5515,22 @@
       const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       const monthName = monthNames[currentMonth];
 
-      const monthTransactions = transactions.filter(t => {
+      const monthTransactions = (transactions || []).filter(t => t && t.date && (() => {
         const d = new Date(t.date);
         return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-      });
+      })());
 
-      const income = monthTransactions.filter(t => t.type === 'income' && t.category !== 'Borrowed' && t.category !== 'Received').reduce((sum, t) => sum + t.amount, 0);
-      const expense = monthTransactions.filter(t => t.type === 'expense' && t.category !== 'Lent').reduce((sum, t) => sum + t.amount, 0);
+      const income = monthTransactions.filter(t => t && t.type === 'income' && t.category !== 'Borrowed' && t.category !== 'Received').reduce((sum, t) => sum + (t.amount || 0), 0);
+      const expense = monthTransactions.filter(t => t && t.type === 'expense' && t.category !== 'Lent').reduce((sum, t) => sum + (t.amount || 0), 0);
 
       // Calculate lent and borrowed from lendings array (for current month)
-      const monthLendings = lendings.filter(l => {
+      const monthLendings = (lendings || []).filter(l => l && l.date && (() => {
         const d = new Date(l.date);
         return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-      });
+      })());
 
-      const lent = monthLendings.filter(l => l.type === 'lent').reduce((sum, l) => sum + (l.amount - (l.paid || 0)), 0);
-      const borrowed = monthLendings.filter(l => l.type === 'borrowed').reduce((sum, l) => sum + (l.amount - (l.paid || 0)), 0);
+      const lent = monthLendings.filter(l => l.type === 'lent').reduce((sum, l) => sum + ((l.amount || 0) - (l.paid || 0)), 0);
+      const borrowed = monthLendings.filter(l => l.type === 'borrowed').reduce((sum, l) => sum + ((l.amount || 0) - (l.paid || 0)), 0);
 
       return { income, expense, saved: income - expense, lent, borrowed, monthName };
     }
@@ -5365,14 +5745,16 @@
       if (goalsQuickView) {
         if (goals.length > 0) {
           goalsQuickView.innerHTML = goals.slice(0, 5).map((g, index) => {
-            const percent = Math.min(Math.round((g.current / g.target) * 100), 100);
+            const current = g.current || 0;
+            const target = g.target || 1;
+            const percent = Math.min(Math.round((current / target) * 100), 100);
             return `
               <div class="goal-mini-card" style="animation-delay: ${index * 0.1}s" onclick="showScreen('goals')">
-                <div class="goal-mini-name">${g.name}</div>
+                <div class="goal-mini-name">${g.name || 'Unnamed Goal'}</div>
                 <div class="goal-mini-progress">
                   <div class="goal-mini-fill" style="width:${percent}%"></div>
                 </div>
-                <div class="goal-mini-amount">${percent}% · ৳${g.current.toLocaleString()}</div>
+                <div class="goal-mini-amount">${percent}% · ৳${(current || 0).toLocaleString()}</div>
               </div>
             `;
           }).join('');
@@ -5404,7 +5786,7 @@
 
       // Full accounts list
       const accountsFull = document.getElementById('accounts-full-list');
-      const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
+      const totalBalance = (accounts || []).reduce((sum, a) => sum + (a.balance || 0), 0);
 
       // Update summary
       const summaryBalance = document.getElementById('total-account-balance');
@@ -5412,11 +5794,11 @@
       const accountCount = document.getElementById('account-count');
       if (accountCount) accountCount.textContent = accounts.length;
       const activeGoals = document.getElementById('active-goals-count');
-      if (activeGoals) activeGoals.textContent = goals.filter(g => g.current < g.target).length;
+      if (activeGoals) activeGoals.textContent = (goals || []).filter(g => g && (g.current || 0) < (g.target || 0)).length;
 
       // Update lent and borrowed amounts
-      const totalLent = lendings.filter(l => l.type === 'lent').reduce((sum, l) => sum + (l.amount - l.paid), 0);
-      const totalBorrowed = lendings.filter(l => l.type === 'borrowed').reduce((sum, l) => sum + (l.amount - l.paid), 0);
+      const totalLent = (lendings || []).filter(l => l && l.type === 'lent').reduce((sum, l) => sum + ((l.amount || 0) - (l.paid || 0)), 0);
+      const totalBorrowed = (lendings || []).filter(l => l && l.type === 'borrowed').reduce((sum, l) => sum + ((l.amount || 0) - (l.paid || 0)), 0);
       const totalLentEl = document.getElementById('total-lent-amount');
       if (totalLentEl) totalLentEl.textContent = '৳' + totalLent.toLocaleString();
       const totalBorrowedEl = document.getElementById('total-borrowed-amount');
@@ -5501,13 +5883,13 @@
       // Upcoming list
       const upcoming = document.getElementById('upcoming-list');
       const today = new Date();
-      const upcomingLends = lendings.filter(l => new Date(l.dueDate) > today && l.amount > l.paid).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+      const upcomingLends = (lendings || []).filter(l => l && l.dueDate && new Date(l.dueDate) > today && (l.amount || 0) > (l.paid || 0)).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
       upcoming.innerHTML = upcomingLends.map(l => `
             <div class="upcoming-item">
                 <div class="info">
                     <div class="icon ${l.type === 'lent' ? 'collect' : 'pay'}"><i class="fas fa-${l.type === 'lent' ? 'arrow-down' : 'arrow-up'}"></i></div>
                     <div class="text">
-                        <span class="amount">৳${(l.amount - l.paid).toLocaleString()}</span> ${l.type === 'lent' ? 'from' : 'to'} ${l.person}
+                        <span class="amount">৳${((l.amount || 0) - (l.paid || 0)).toLocaleString()}</span> ${l.type === 'lent' ? 'from' : 'to'} ${l.person || 'Unknown'}
                     </div>
                 </div>
                 <span class="badge-due">${new Date(l.dueDate).toLocaleDateString()}</span>
@@ -5551,12 +5933,12 @@
           return `
                     <div class="goal-card" style="animation-delay: ${index * 0.1}s">
                         <div class="goal-header">
-                            <span style="font-size:16px; color:#1f2937;"><strong>${g.name}</strong></span>
+                            <span style="font-size:16px; color:#1f2937;"><strong>${g.name || 'Unnamed Goal'}</strong></span>
                             <span style="font-size:14px; color:#8b5cf6; font-weight:600;">${percent}%</span>
                         </div>
                         <div style="display:flex; justify-content:space-between; font-size:13px; color:#6b7280; margin-bottom:8px;">
-                            <span>৳${g.current.toLocaleString()}</span>
-                            <span>৳${g.target.toLocaleString()}</span>
+                            <span>৳${(g.current || 0).toLocaleString()}</span>
+                            <span>৳${(g.target || 0).toLocaleString()}</span>
                         </div>
                         ${g.dueDate ? `<div style="font-size:12px; color:#9ca3af; margin-bottom:10px;"><i class="fas fa-calendar-alt"></i> Due ${new Date(g.dueDate).toLocaleDateString()}</div>` : ''}
                         <div class="goal-progress-large"><div class="progress-fill-large" style="width:${goalPercent}%"></div></div>
@@ -5568,6 +5950,10 @@
                             </span>
                           </div>`
             }
+                        <div class="goal-actions">
+                          <button class="goal-action-btn" onclick="openEditGoalModal('${g.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                          <button class="goal-action-btn delete" onclick="confirmDeleteGoal('${g.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
                     </div>
                 `;
         }).join('');
@@ -5576,11 +5962,11 @@
       // Lend/Borrow summary
       const summary = document.getElementById('lend-borrow-summary');
       if (summary) {
-        const totalLent = lendings.filter(l => l.type === 'lent').reduce((s, l) => s + (l.amount - l.paid), 0);
-        const totalBorrowed = lendings.filter(l => l.type === 'borrowed').reduce((s, l) => s + (l.amount - l.paid), 0);
+        const totalLent = (lendings || []).filter(l => l && l.type === 'lent').reduce((s, l) => s + ((l.amount || 0) - (l.paid || 0)), 0);
+        const totalBorrowed = (lendings || []).filter(l => l && l.type === 'borrowed').reduce((s, l) => s + ((l.amount || 0) - (l.paid || 0)), 0);
         summary.innerHTML = `
-                <p><i class="fas fa-hand-holding-heart" style="color:#10b981;"></i> Lent out: ৳${totalLent.toLocaleString()} (${lendings.filter(l => l.type === 'lent').length} people)</p>
-                <p><i class="fas fa-hand-holding" style="color:#ef4444;"></i> Borrowed: ৳${totalBorrowed.toLocaleString()} (${lendings.filter(l => l.type === 'borrowed').length} person)</p>
+                <p><i class="fas fa-hand-holding-heart" style="color:#10b981;"></i> Lent out: ৳${totalLent.toLocaleString()} (${(lendings || []).filter(l => l && l.type === 'lent').length} people)</p>
+                <p><i class="fas fa-hand-holding" style="color:#ef4444;"></i> Borrowed: ৳${totalBorrowed.toLocaleString()} (${(lendings || []).filter(l => l && l.type === 'borrowed').length} person)</p>
             `;
       }
 
@@ -5686,18 +6072,18 @@
       document.getElementById('restart-confirm-modal').classList.add('active');
     }
 
-    function confirmRestart() {
+    async function confirmRestart() {
       // Clear all data from localStorage
       localStorage.removeItem('bloom_accounts');
       localStorage.removeItem('bloom_transactions');
       localStorage.removeItem('bloom_goals');
       localStorage.removeItem('bloom_lendings');
 
-      // Clear data from Supabase
-      supabaseDb.from('accounts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      supabaseDb.from('transactions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      supabaseDb.from('goals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      supabaseDb.from('lendings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      // Clear data from Supabase - delete all records
+      await supabaseDb.from('accounts').delete().neq('id', 'zzzzzzz');
+      await supabaseDb.from('transactions').delete().neq('id', 'zzzzzzz');
+      await supabaseDb.from('goals').delete().neq('id', 'zzzzzzz');
+      await supabaseDb.from('lendings').delete().neq('id', 'zzzzzzz');
 
       accounts = [];
       transactions = [];
@@ -5729,13 +6115,15 @@
 
     // Add deposit to goal
     function addDeposit() {
-      const goalId = parseInt(document.getElementById('deposit-goal').value);
+      const goalIdValue = document.getElementById('deposit-goal').value;
+      const goalId = goalIdValue ? parseInt(goalIdValue) : null;
       const amount = parseFloat(document.getElementById('deposit-amount').value);
       const accountName = document.getElementById('deposit-account').value;
 
       if (!goalId || !amount || amount <= 0) return showToast('Please enter valid amount', 'warning');
 
-      const goal = goals.find(g => g.id === goalId);
+      // Find goal by comparing string versions of IDs (handle both number and string IDs)
+      const goal = goals.find(g => String(g.id) === String(goalId));
       if (!goal) return showToast('Goal not found', 'error');
 
       const account = accounts.find(a => a.name === accountName);
@@ -5840,6 +6228,8 @@
     window.changePassword = changePassword;
     window.openNotifications = openNotifications;
     window.clearAllNotifications = clearAllNotifications;
+    window.toggleUserMenu = toggleUserMenu;
+    window.logout = logout;
     window.toggleSettingsMenu = function (event) {
       event.stopPropagation();
       const menu = document.getElementById('settings-menu');
@@ -5859,6 +6249,9 @@
     window.addLend = addLend;
     window.addAccount = addAccount;
     window.addGoal = addGoal;
+    window.openEditGoalModal = openEditGoalModal;
+    window.saveEditedGoal = saveEditedGoal;
+    window.confirmDeleteGoal = confirmDeleteGoal;
     window.deleteAccount = deleteAccount;
     window.confirmDeleteAccount = confirmDeleteAccount;
     window.editAccount = editAccount;
