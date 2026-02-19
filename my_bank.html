@@ -4324,30 +4324,29 @@
 
       // Then try to save to Supabase
       try {
-        // Clear existing data and insert new data
-        await supabaseDb.from('accounts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-        await supabaseDb.from('transactions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-        await supabaseDb.from('goals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-        await supabaseDb.from('lendings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-
+        // Use upsert to insert or update records
         if (accounts.length > 0) {
-          await supabaseDb.from('accounts').insert(accounts);
+          const { error } = await supabaseDb.from('accounts').upsert(accounts, { onConflict: 'id' });
+          if (error) console.error('Accounts upsert error:', error);
         }
         if (transactions.length > 0) {
-          await supabaseDb.from('transactions').insert(transactions);
+          const { error } = await supabaseDb.from('transactions').upsert(transactions, { onConflict: 'id' });
+          if (error) console.error('Transactions upsert error:', error);
         }
         if (goals.length > 0) {
-          await supabaseDb.from('goals').insert(goals);
+          const { error } = await supabaseDb.from('goals').upsert(goals, { onConflict: 'id' });
+          if (error) console.error('Goals upsert error:', error);
         }
         if (lendings.length > 0) {
-          await supabaseDb.from('lendings').insert(lendings);
+          const { error } = await supabaseDb.from('lendings').upsert(lendings, { onConflict: 'id' });
+          if (error) console.error('Lendings upsert error:', error);
         }
 
         console.log('Data saved to Supabase');
         showToast('Data saved to cloud!', 'success');
       } catch (e) {
-        console.log('Supabase save failed, data saved locally only');
-        showToast('Data saved!', 'success');
+        console.log('Supabase save failed:', e);
+        showToast('Data saved locally!', 'success');
       }
 
       playNotificationSound();
